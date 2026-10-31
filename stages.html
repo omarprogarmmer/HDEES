@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- ⚡ 1) تطبيق الإعدادات فوراً -->
+<script src="setting_mc.js"></script>
+
+<!-- 🎨 2) المتغيرات العامة (الوضع الداكن + حجم الخط) -->
+<link rel="stylesheet" href="m_c.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>خريطة المراحل</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg-page: #f0e8d8;
+
+    --frame-color: #2e7d32;
+    --frame-height: 52px;
+    --frame-text: #ffffff;
+    --exit-text: #cccccc;
+
+    --stage-bg: #0d47a1;
+    --stage-completed-bg: #1565c0;
+    --stage-current-bg: #0d47a1;
+    --stage-locked-opacity: 0.35;
+
+    --line-color: #000000;
+    --dot-size: 7px;
+    --dot-gap: 34px;
+
+    --radius: 62px;
+    --gap-y: 96px;
+
+    --swing: 78px;
+
+    --divider-thickness: 8px;
+
+    --lift: -60px;
+  }
+
+  html, body { height: 100%; }
+  body {
+    min-height: 100vh;
+    background: var(--bg-page);
+    padding-bottom: 100px;
+    overflow-x: hidden;
+    touch-action: pan-y;
+    position: relative;
+  }
+
+  /* ============================================================
+     🎨 الخلفية المتحركة (فقاعات + أشكال + نبضات)
+     ============================================================ */
+  .animated-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: linear-gradient(135deg, #f0e8d8 0%, #e8dcc8 50%, #f0e8d8 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 14s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* الفقاعات الصاعدة */
+  .animated-bg .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%,
+                rgba(46, 125, 50, 0.15),
+                rgba(46, 125, 50, 0.05));
+    border: 1px solid rgba(46, 125, 50, 0.1);
+    animation: floatUp linear infinite;
+    will-change: transform;
+    z-index: 0;
+  }
+
+  @keyframes floatUp {
+    0% {
+      transform: translateY(100vh) scale(0.6) rotate(0deg);
+      opacity: 0;
+    }
+    10% { opacity: 1; }
+    90% { opacity: 0.8; }
+    100% {
+      transform: translateY(-20vh) scale(1.15) rotate(180deg);
+      opacity: 0;
+    }
+  }
+
+  /* أشكال هندسية دوارة */
+  .animated-bg .shape {
+    position: absolute;
+    border: 2px solid rgba(13, 71, 161, 0.06);
+    animation: rotateShape linear infinite;
+    will-change: transform;
+    z-index: 0;
+  }
+
+  @keyframes rotateShape {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* دوائر متوسعة (Pulse) */
+  .animated-bg .pulse-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(46, 125, 50, 0.08);
+    animation: pulseRing 6s ease-out infinite;
+    will-change: transform, opacity;
+    z-index: 0;
+  }
+
+  @keyframes pulseRing {
+    0% {
+      transform: scale(0.5);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
+  /* ====== الإطار العلوي ====== */
+  .top-frame {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: var(--frame-height);
+    background: var(--frame-color);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 14px; z-index: 999;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+  }
+  .page-title {
+    font-size: 15px; font-weight: 700; color: var(--frame-text);
+  }
+  .exit-btn {
+    width: 36px; height: 36px;
+    background: transparent;
+    color: var(--exit-text);
+    border: 2px solid var(--exit-text);
+    border-radius: 50%;
+    font-size: 20px; font-weight: 900;
+    line-height: 1;
+    cursor: pointer; transition: 0.25s;
+    display: flex; align-items: center; justify-content: center;
+    font-family: Arial, sans-serif;
+  }
+  .exit-btn:active {
+    color: #fff; border-color: #fff;
+    background: rgba(255,255,255,0.15);
+    transform: scale(0.92);
+  }
+
+  /* ====== الإطار السفلي ====== */
+  .bottom-frame {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: var(--frame-height); background: var(--frame-color);
+    z-index: 999;
+    box-shadow: 0 -3px 12px rgba(0,0,0,0.2);
+  }
+
+  /* ====== حاوية الخريطة ====== */
+  .map-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: var(--frame-height) 16px 40px;
+  }
+
+  /* ====== طبقة النقاط ====== */
+  .dots-layer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .dot {
+    position: absolute;
+    width: var(--dot-size);
+    height: var(--dot-size);
+    background: var(--line-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.9;
+    will-change: transform;
+  }
+
+  /* ====== حاوية المراحل ====== */
+  .stages-wrapper {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--gap-y);
+    align-items: center;
+    transform: translateY(var(--lift));
+  }
+
+  .stage-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(var(--row-offset, 0px));
+  }
+
+  /* ====== دائرة المرحلة ====== */
+  .stage-circle {
+    width: var(--radius);
+    height: var(--radius);
+    border-radius: 50%;
+    background: var(--stage-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+    border: 4px solid rgba(255,255,255,0.18);
+    z-index: 3;
+  }
+
+  .stage-circle:active {
+    transform: scale(0.94);
+  }
+
+  .stage-circle.completed {
+    background: var(--stage-completed-bg);
+    color: #e3f2fd;
+  }
+
+  .stage-circle.current {
+    background: var(--stage-current-bg);
+    color: #e0e0e0;
+    box-shadow: 0 0 0 5px rgba(13,71,161,0.18),
+                0 6px 14px rgba(0,0,0,0.3);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .stage-circle.current .stage-num { display: none; }
+  .stage-circle.current::after {
+    content: "★";
+    font-size: 30px;
+    font-weight: 400;
+    color: #ffd54f;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .stage-circle.locked {
+    opacity: var(--stage-locked-opacity);
+    cursor: not-allowed;
+    filter: grayscale(50%);
+  }
+  .stage-circle.locked:active {
+    transform: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 5px rgba(13,71,161,0.18), 0 6px 14px rgba(0,0,0,0.3); }
+    50%      { box-shadow: 0 0 0 12px rgba(13,71,161,0.05), 0 6px 14px rgba(0,0,0,0.3); }
+  }
+
+  .stage-num {
+    color: inherit;
+    pointer-events: none;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+  }
+
+  .stage-popup {
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%) scale(0.6);
+    background: var(--stage-bg);
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 18px;
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    z-index: 10;
+  }
+  .stage-popup.show {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+  .stage-popup::before {
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-left-color: var(--stage-bg);
+  }
+
+  .thick-divider-wrap {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .thick-divider {
+    position: relative;
+    width: 100vw;
+    height: var(--divider-thickness);
+    background: var(--line-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    left: 50%;
+    transform: translateX(-50%);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 380px) {
+    :root {
+      --radius: 54px;
+      --gap-y: 86px;
+      --swing: 62px;
+      --dot-size: 6px;
+      --dot-gap: 30px;
+      --divider-thickness: 6px;
+      --lift: -50px;
+    }
+    .stage-circle { font-size: 20px; }
+    .stage-circle.current::after { font-size: 26px; }
+    .stage-popup { font-size: 11px; padding: 4px 10px; }
+    .page-title { font-size: 14px; }
+  }
+
+  @media (max-width: 340px) {
+    :root {
+      --radius: 48px;
+      --gap-y: 78px;
+      --swing: 52px;
+      --dot-size: 5px;
+      --dot-gap: 26px;
+      --divider-thickness: 5px;
+      --lift: -40px;
+    }
+    .stage-circle { font-size: 18px; border-width: 3px; }
+    .stage-circle.current::after { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 🎨 الخلفية المتحركة -->
+<div class="animated-bg" id="animatedBg"></div>
+
+<div class="top-frame">
+  <div class="page-title">🗺️ خريطة المراحل</div>
+  <button class="exit-btn" id="exitBtn">&gt;</button>
+</div>
+
+<div class="map-container" id="mapContainer">
+
+  <div class="dots-layer" id="dotsLayer"></div>
+
+  <div class="stages-wrapper" id="stagesWrapper"></div>
+
+</div>
+
+<div class="bottom-frame"></div>
+
+<script>
+/* ============================================================
+   🎨 الخلفية المتحركة (فقاعات + أشكال + نبضات)
+   ============================================================ */
+function createAnimatedBackground() {
+  const bg = document.getElementById("animatedBg");
+
+  // 1️⃣ فقاعات صاعدة
+  for (let i = 0; i < 15; i++) {
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    const size = 30 + Math.random() * 100;
+    const duration = 14 + Math.random() * 20; // مدة الدورة
+    bubble.style.width = size + "px";
+    bubble.style.height = size + "px";
+    bubble.style.left = Math.random() * 100 + "%";
+    bubble.style.animationDuration = duration + "s";
+    // ✅ تأخير سالب: تبدأ الفقاعة من منتصف دورتها فورًا
+    bubble.style.animationDelay = -(Math.random() * duration) + "s";
+    bg.appendChild(bubble);
+  }
+
+  // 2️⃣ أشكال هندسية دوارة
+  for (let i = 0; i < 6; i++) {
+    const shape = document.createElement("div");
+    shape.className = "shape";
+    const size = 50 + Math.random() * 90;
+    const duration = 25 + Math.random() * 30;
+    shape.style.width = size + "px";
+    shape.style.height = size + "px";
+    shape.style.left = (5 + Math.random() * 90) + "%";
+    shape.style.top = (5 + Math.random() * 90) + "%";
+    shape.style.borderRadius = Math.random() > 0.5 ? "50%" : "12%";
+    shape.style.animationDuration = duration + "s";
+    shape.style.animationDelay = -(Math.random() * duration) + "s";
+    bg.appendChild(shape);
+  }
+
+  // 3️⃣ دوائر متوسعة (Pulse Rings)
+  for (let i = 0; i < 5; i++) {
+    const pulse = document.createElement("div");
+    pulse.className = "pulse-circle";
+    const size = 40 + Math.random() * 60;
+    const duration = 5 + Math.random() * 4;
+    pulse.style.width = size + "px";
+    pulse.style.height = size + "px";
+    pulse.style.left = (10 + Math.random() * 80) + "%";
+    pulse.style.top = (10 + Math.random() * 80) + "%";
+    pulse.style.animationDuration = duration + "s";
+    pulse.style.animationDelay = -(Math.random() * duration) + "s";
+    bg.appendChild(pulse);
+  }
+}
+
+/* ============================================================
+   ⚙️ الإعدادات
+   ============================================================ */
+
+const CONFIG = {
+  totalStages: 20,
+  dividerEvery: 4,
+  themeKey: "app_theme",
+  fontSizeKey: "app_font_size",
+
+  exitUrl: "index.html",
+  exitConfirmMessage: "هل تريد الخروج؟",
+
+  lessonsKey:   "lessons_stages_count",
+  exercisesKey: "exercises_stages_count",
+
+  stageLinks: {
+    // :  "g_t.html"
+
+    // 1:  "g_level.html",
+    1:  "g1_level1.html",
+    2:  "g1_t1.html",
+    3:  "g1_t2.html",
+    4:  "g1_t3.html",
+// 2
+    5:  "g2_level1.html",
+    6:  "g2_t1.html",
+    7:  "g2_t2.html",
+    8:  "g2_t3.html",
+// 3
+    9:  "g3_level1.html",
+    10: "g3_t1.html",
+    11: "g3_t2.html",
+    12: "g3_t3.html",
+// 4
+    13: "g4_level1.html",
+    14: "g4_t1.html",
+    15: "g4_t2.html",
+    16: "g4_t3.html",
+// 5
+    17: "g5_level1.html",
+    18: "g5_t1.html",
+    19: "g5_t2.html",
+    20: "g5_t3.html",
+  },
+};
+
+/* ============================================================
+   🔙 زر الخروج
+   ============================================================ */
+
+document.getElementById("exitBtn").onclick = () => {
+  window.location.href = CONFIG.exitUrl;
+};
+
+/* ============================================================
+   📊 عدد المراحل المكتملة
+   ============================================================ */
+
+function getCompletedCount() {
+  const lessons   = parseInt(localStorage.getItem(CONFIG.lessonsKey)   || "0", 10);
+  const exercises = parseInt(localStorage.getItem(CONFIG.exercisesKey) || "0", 10);
+  return lessons + exercises;
+}
+
+/* ============================================================
+   🎯 حالة المرحلة
+   ============================================================ */
+
+function getStageState(index) {
+  const completed = getCompletedCount();
+  if (index <= completed)      return "completed";
+  if (index === completed + 1) return "current";
+  return "locked";
+}
+
+/* ============================================================
+   🎠 انزياح أفقي لكل مرحلة
+   ============================================================ */
+
+function getRowOffset(index) {
+  const swing = parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue('--swing')
+  ) || 78;
+  const phase = (index - 1) * (Math.PI / 2);
+  return Math.sin(phase) * swing;
+}
+
+/* ============================================================
+   🏗️ بناء المراحل
+   ============================================================ */
+
+const stagesWrapper = document.getElementById("stagesWrapper");
+
+function buildStages() {
+  stagesWrapper.innerHTML = "";
+
+  for (let i = 1; i <= CONFIG.totalStages; i++) {
+    const state = getStageState(i);
+
+    const circle = document.createElement("div");
+    circle.className = "stage-circle " + state;
+    circle.dataset.index = i;
+
+    const num = document.createElement("span");
+    num.className = "stage-num";
+    num.textContent = i;
+    circle.appendChild(num);
+
+    const popup = document.createElement("div");
+    popup.className = "stage-popup";
+    popup.textContent = "المرحلة " + i;
+
+    const row = document.createElement("div");
+    row.className = "stage-row";
+    row.style.setProperty("--row-offset", getRowOffset(i) + "px");
+    row.appendChild(circle);
+    row.appendChild(popup);
+    stagesWrapper.appendChild(row);
+
+    circle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      handleStageClick(i, state, popup);
+    });
+
+    if (i % CONFIG.dividerEvery === 0 && i < CONFIG.totalStages) {
+      const dividerWrap = document.createElement("div");
+      dividerWrap.className = "thick-divider-wrap";
+      const divider = document.createElement("div");
+      divider.className = "thick-divider";
+      dividerWrap.appendChild(divider);
+      stagesWrapper.appendChild(dividerWrap);
+    }
+  }
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(drawDots);
+  });
+}
+
+/* ============================================================
+   🖱️ عند الضغط على مرحلة
+   ============================================================ */
+
+function handleStageClick(index, state, popup) {
+  popup.classList.add("show");
+  clearTimeout(popup._t);
+  popup._t = setTimeout(() => popup.classList.remove("show"), 1800);
+
+  if (state === "locked") {
+    setTimeout(() => alert("🔒 هذه المرحلة مقفلة"), 200);
+    return;
+  }
+
+  const link = CONFIG.stageLinks[index];
+  if (link) {
+    setTimeout(() => window.location.href = link, 450);
+  } else {
+    setTimeout(() => alert("⚠️ لا توجد صفحة للمرحلة " + index), 200);
+  }
+}
+
+/* ============================================================
+   🔵 رسم النقاط المتصلة
+   ============================================================ */
+
+function drawDots() {
+  const dotsLayer = document.getElementById("dotsLayer");
+  const container = document.getElementById("mapContainer");
+  const circles   = Array.from(document.querySelectorAll(".stage-circle"));
+
+  if (circles.length === 0) return;
+
+  dotsLayer.innerHTML = "";
+
+  const containerRect = container.getBoundingClientRect();
+
+  const points = circles.map((circle, idx) => {
+    const rect = circle.getBoundingClientRect();
+    return {
+      x: rect.left - containerRect.left + rect.width / 2,
+      y: rect.top  - containerRect.top  + rect.height / 2,
+      index: idx + 1,
+    };
+  });
+
+  points.sort((a, b) => b.y - a.y);
+
+  const gap = parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue('--dot-gap')
+  ) || 34;
+
+  for (let i = 0; i < points.length - 1; i++) {
+    const p1 = points[i];
+    const p2 = points[i + 1];
+
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const dist = Math.hypot(dx, dy);
+
+    const count = Math.max(1, Math.round(dist / gap));
+
+    for (let d = 1; d < count; d++) {
+      const t = d / count;
+
+      const midY = (p1.y + p2.y) / 2;
+      const x = cubicBezier(p1.x, p1.x, p2.x, p2.x, t);
+      const y = cubicBezier(p1.y, midY, midY, p2.y, t);
+
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      dot.style.left = x + "px";
+      dot.style.top  = y + "px";
+      dotsLayer.appendChild(dot);
+    }
+  }
+}
+
+/* 📐 دالة Bezier التكعيبية */
+function cubicBezier(p0, p1, p2, p3, t) {
+  const mt = 1 - t;
+  return mt*mt*mt*p0 + 3*mt*mt*t*p1 + 3*mt*t*t*p2 + t*t*t*p3;
+}
+
+/* ============================================================
+   🎯 الانتقال التلقائي للمرحلة الحالية
+   ============================================================ */
+
+function scrollToCurrentStage() {
+  const currentCircle = document.querySelector(".stage-circle.current");
+
+  if (!currentCircle) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  const rect = currentCircle.getBoundingClientRect();
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const targetY = rect.top + scrollTop - (window.innerHeight / 2) + (rect.height / 2);
+
+  window.scrollTo({ top: Math.max(0, targetY), behavior: "smooth" });
+}
+
+/* ============================================================
+   🚀 التشغيل
+   ============================================================ */
+
+createAnimatedBackground();
+buildStages();
+
+setTimeout(scrollToCurrentStage, 500);
+
+let resizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(drawDots, 200);
+});
+
+window.addEventListener("orientationchange", () => {
+  setTimeout(drawDots, 300);
+});
+
+window.addEventListener("stageCompleted", (e) => {
+  console.log("🎯 اكتملت مرحلة:", e.detail);
+  buildStages();
+});
+</script>
+
+</body>
+</html>

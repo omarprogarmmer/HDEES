@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قالب الدرس</title>
+<link rel="stylesheet" href="losson_code/losson.css">
+</head>
+<body>
+
+<!-- 🟢 الشريط العلوي -->
+<div class="top-frame">
+  <div class="lesson-name" id="lessonName">—</div>
+  <button class="exit-btn" id="exitBtn">&gt;</button>
+</div>
+
+<!-- 📄 محتوى الصفحة -->
+<div class="page-wrapper">
+  <div class="content-wrapper">
+    <img id="slideImage" class="slide-image" src="" alt="صورة">
+    <div class="text-box">
+      <div class="page-number" id="pageNumber">صفحة 1</div>
+      <p class="slide-text" id="slideText">—</p>
+
+      <!-- 🔊 زر الاستماع -->
+      <button class="listen-btn" id="listenBtn" type="button">
+        <span class="listen-icon">🔊</span>
+        <span class="listen-label">اسمع</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ نص متغير حسب الصفحة -->
+  <div class="final-message" id="finalMessage"></div>
+</div>
+
+<!-- 🎛️ أزرار التنقل -->
+<div class="fixed-actions">
+  <button class="nav-btn prev" id="prevBtn">→ السابق</button>
+  <button class="nav-btn next" id="nextBtn">التالي ←</button>
+</div>
+
+<div class="bottom-frame"></div>
+
+<!-- 🎉 طبقة الفوز -->
+<div class="win-overlay" id="winOverlay">
+  <div class="win-rings"></div>
+  <div class="win-rings delay"></div>
+  <div class="win-icon">🏆</div>
+  <div class="win-text">أحسنت!</div>
+</div>
+
+<!-- 🎧 عنصر صوت الصفحة -->
+<audio id="slideAudio" preload="auto"></audio>
+
+<!-- 🔊 صوت الأزرار -->
+<audio id="clickSound" src="sound/buttem.mp3" preload="auto"></audio>
+
+<!-- ⚙️ الإعدادات (CONFIG) -->
+<script>
+const CONFIG = {
+  lessonName: "الحديث الأول _فضل الصيام",
+  lessonId: "lesson1",
+  stageNumber: 1,
+
+  exitUrl: "stages.html",
+  exitConfirmMessage: "هل تريد الخروج من الدرس؟",
+
+  finishButtonText: "✅ انتهى الدرس",
+  finishRedirectUrl: "stages.html",
+
+  /* 🎉 إعدادات الفوز */
+  winText: "أحسنت! 🎉",
+  winDuration: 2000,
+
+  lessonsStagesKey: "lessons_stages_count",
+  solvedListKey:    "solved_lessons_list",
+
+  slides: [
+    {
+      id: 1,
+      image: "photo/d.png",
+      text: "قال النبيﷺ : ",
+      audio: "sound/page1.mp3",
+      footer: " "
+    },
+    {
+      id: 2,
+      image: "photo/d1.png",
+      text: "",
+      audio: "sound/page2.mp3",
+      footer: ""
+    },
+    {
+      id: 3,
+      image: "photo/f1_1.png",
+      text: " ",
+      audio: "sound/page3.mp3",
+      footer: ""
+    },
+    {
+      id: 4,
+      image: "photo/f1_1.png",
+      text: "قال النبي ﷺ:<< >>",
+      audio: "sound/page3.mp3",
+      footer: " "
+    }
+  ]
+};
+</script>
+
+<!-- 🚀 سكربت الدرس -->
+<script src="losson_code/losson.js"></script>
+
+</body>
+</html>

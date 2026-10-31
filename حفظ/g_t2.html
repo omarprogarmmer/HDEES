@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تمرين المرحلة الثانية</title>
+<link rel="stylesheet" href="test_code/t_2.css">
+</head>
+<body>
+
+<!-- 🟢 الشريط العلوي -->
+<div class="top-frame">
+  <div class="lesson-name" id="lessonName">—</div>
+  <button class="exit-btn" id="exitBtn">&gt;</button>
+</div>
+
+<!-- 📄 محتوى الصفحة -->
+<div class="page-wrapper">
+  <div class="content-wrapper">
+    <div class="sentence-box" id="sentenceBox"></div>
+    <div class="slots-grid" id="dropZone"></div>
+    <div class="divider"></div>
+    <div class="items-pool" id="itemsPool"></div>
+    <div class="result-msg" id="resultMsg"></div>
+  </div>
+</div>
+
+<!-- 🎛️ الأزرار الثابتة -->
+<div class="fixed-actions">
+  <button class="nav-btn reset" id="resetBtn">🔄 إعادة </button>
+  <button class="nav-btn check" id="checkBtn">✅ تحقق</button>
+</div>
+
+<div class="bottom-frame"></div>
+
+<!-- 🎉 طبقة الفوز -->
+<div class="win-overlay" id="winOverlay">
+  <div class="win-rings"></div>
+  <div class="win-rings delay"></div>
+  <div class="win-icon">🏆</div>
+  <div class="win-text">أحسنت!</div>
+</div>
+
+<!-- 🔊 صوت الأزرار -->
+<audio id="clickSound" src="sonud/buttem.mp3" preload="auto"></audio>
+
+<!-- ⚙️ الإعدادات -->
+<script>
+const CONFIG = {
+  id: "  _التدريب الثاني ",
+  stageNumber: 4,
+
+  exitUrl: "stages.html",
+  exitConfirmMessage: "هل تريد الخروج؟",
+
+  exercisesStagesKey: "exercises_stages_count",
+  solvedListKey:      "solved_exercises_list",
+
+  // 📝 النص الثابت
+  sentence: "قال الرسول ﷺ:",
+
+  // 🔢 عدد المربعات
+  slotCount: 4,
+
+  // ✅ الإجابة الصحيحة
+  correctItem: {
+    id: "correct",
+    text: "إنما الأعمال بالنيات"
+  },
+
+  // ❌ الإجابات الخاطئة
+  slots: [
+    { id: "slot_1", correctAnswer: "  " },
+    { id: "slot_2", correctAnswer: "  " },
+    { id: "slot_3", correctAnswer: " " },
+    { id: "slot_4", correctAnswer: "  " },
+    { id: "slot_5", correctAnswer: " " }
+  ],
+
+
+
+  successMessage: "✅ أحسنت! الإجابة صحيحة",
+  emptyMessage:   "⚠️ املأ كل المربعات أولاً",
+  retryMessage:   "❌ حاول مرة أخرى",
+
+  successRedirectUrl: "stages.html",
+  successRedirectDelay: 2000,
+
+  winText: "أحسنت!",
+  winDuration: 2000,
+};
+</script>
+
+<!-- 🚀 منطق التطبيق -->
+<script src="test_code/t_2.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الملف الشخصي — حديث</title>
+<script>
+  // ============================================
+  // 🔐 فحص التسجيل — منع الدخول بدون تسجيل
+  // ============================================
+  if (!localStorage.getItem('player_name') || !localStorage.getItem('player_age')) {
+    window.location.replace('register.html');
+  }
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg-page: #f5f3ee;
+    --text-color: #3d3d3d;
+    --border-color: #e0dbd0;
+    --box-bg: #ffffff;
+    --btn-primary-bg: #3a4a3f;
+    --btn-primary-text: #ffffff;
+    --frame-color: #2e7d32;
+    --frame-height: 50px;
+    --frame-text: #ffffff;
+    --exit-text: #cccccc;
+    --accent-color: #2e7d32;
+  }
+
+  html, body { height: 100%; }
+  body {
+    min-height: 100vh;
+    background: var(--bg-page);
+    color: var(--text-color);
+    padding-bottom: 120px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ============================================================
+     🎨 الخلفية المتحركة
+     ============================================================ */
+  .animated-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: linear-gradient(135deg, #f5f3ee 0%, #ece7db 50%, #f5f3ee 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 14s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* الفقاعات الصاعدة */
+  .animated-bg .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%,
+                rgba(46, 125, 50, 0.15),
+                rgba(46, 125, 50, 0.05));
+    border: 1px solid rgba(46, 125, 50, 0.1);
+    animation: floatUp linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes floatUp {
+    0% {
+      transform: translateY(100vh) scale(0.6) rotate(0deg);
+      opacity: 0;
+    }
+    10% { opacity: 1; }
+    90% { opacity: 0.8; }
+    100% {
+      transform: translateY(-20vh) scale(1.15) rotate(180deg);
+      opacity: 0;
+    }
+  }
+
+  /* أشكال هندسية دوارة */
+  .animated-bg .shape {
+    position: absolute;
+    border: 2px solid rgba(13, 71, 161, 0.06);
+    animation: rotateShape linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes rotateShape {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* دوائر متوسعة (Pulse) */
+  .animated-bg .pulse-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(46, 125, 50, 0.08);
+    animation: pulseRing 6s ease-out infinite;
+    will-change: transform, opacity;
+  }
+
+  @keyframes pulseRing {
+    0% {
+      transform: scale(0.5);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
+  /* 🟢 الشريط العلوي */
+  .top-frame {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: var(--frame-height);
+    background: var(--frame-color);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 18px; z-index: 999;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  }
+  .profile-title { font-size: 16px; font-weight: 700; color: var(--frame-text); }
+
+  /* ✅ زر الخروج */
+  .finish-btn {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    background: transparent;
+    color: var(--exit-text);
+    border: 2px solid var(--exit-text);
+    border-radius: 50%;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+    transition: 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+  }
+  .finish-btn:hover {
+    color: #ffffff;
+    border-color: #ffffff;
+    background: rgba(255,255,255,0.15);
+  }
+
+  .bottom-frame {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: var(--frame-height); background: var(--frame-color);
+    z-index: 999; box-shadow: 0 -3px 10px rgba(0,0,0,0.15);
+  }
+
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    padding: calc(var(--frame-height) + 30px) 20px 20px;
+    display: flex; justify-content: center;
+  }
+  .content-wrapper {
+    width: 100%; max-width: 780px;
+    animation: fadeIn 0.45s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .player-card {
+    background: var(--box-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 18px 16px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    text-align: center;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .avatar-wrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 12px;
+    cursor: pointer;
+  }
+
+  .avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--frame-color);
+    background: #eee;
+    transition: 0.25s;
+  }
+  .avatar-wrapper:hover .avatar-img { opacity: 0.85; }
+
+  .avatar-edit-badge {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--frame-color);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    border: 2px solid var(--box-bg);
+    pointer-events: none;
+  }
+
+  #avatarInput { display: none; }
+
+  .name-row {
+    display: flex;
+    gap: 8px;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  .name-input {
+    flex: 1;
+    padding: 9px 14px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    background: var(--box-bg);
+    color: var(--text-color);
+    outline: none;
+    transition: 0.25s;
+  }
+  .name-input:focus { border-color: var(--frame-color); }
+
+  .save-btn {
+    padding: 9px 18px;
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.25s;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.9);
+    max-width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden;
+  }
+
+  .save-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    max-width: 160px;
+    padding: 9px 18px;
+  }
+
+  .save-btn:hover { opacity: 0.9; }
+
+  .save-msg {
+    font-size: 12px;
+    color: var(--frame-color);
+    margin-top: 8px;
+    height: 14px;
+    font-weight: 600;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .stat-box {
+    background: var(--box-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 24px 16px;
+    text-align: center;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    position: relative;
+  }
+
+  .stat-badge {
+    position: absolute;
+    top: -12px;
+    right: 18px;
+    background: var(--frame-color);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .stat-value {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--accent-color);
+    line-height: 1;
+    margin-top: 6px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: #777;
+    margin-top: 10px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    .player-card { padding: 14px 12px; margin-bottom: 14px; }
+    .avatar-wrapper { width: 80px; height: 80px; margin-bottom: 10px; }
+    .avatar-edit-badge { width: 22px; height: 22px; font-size: 10px; }
+    .name-row { max-width: 100%; }
+    .name-input { padding: 8px 10px; font-size: 13px; }
+    .save-btn.visible { padding: 8px 14px; font-size: 12px; max-width: 100%; }
+    .stat-value { font-size: 38px; }
+    .stat-box   { padding: 20px 8px; }
+    .stat-badge { font-size: 10px; padding: 3px 9px; right: 10px; }
+    .stat-label { font-size: 11px; }
+  }
+
+  @media (max-width: 360px) {
+    .avatar-wrapper { width: 70px; height: 70px; }
+    .stat-value     { font-size: 32px; }
+    .stat-label     { font-size: 10px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animated-bg .bubble,
+    .animated-bg .shape,
+    .animated-bg .pulse-circle,
+    .animated-bg {
+      animation: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- 🎨 الخلفية المتحركة -->
+<div class="animated-bg" id="animatedBg"></div>
+
+<div class="top-frame">
+  <div class="profile-title">👤 الملف الشخصي</div>
+  <button class="finish-btn" id="finishBtn">&gt;</button>
+</div>
+
+<div class="page-wrapper">
+  <div class="content-wrapper">
+
+    <div class="player-card">
+      <div class="avatar-wrapper" id="avatarWrapper" title="اضغط لتغيير الصورة">
+        <img id="avatarImg" class="avatar-img"
+             src="https://ui-avatars.com/api/?name=Player&size=200&background=2e7d32&color=fff"
+             alt="صورة اللاعب">
+        <div class="avatar-edit-badge">✏️</div>
+      </div>
+      <input type="file" id="avatarInput" accept="image/*">
+
+      <div class="name-row">
+        <input type="text" id="playerName" class="name-input"
+               placeholder="اكتب اسمك هنا" maxlength="20">
+        <button class="save-btn" id="saveBtn">💾 حفظ</button>
+      </div>
+      <div class="save-msg" id="saveMsg"></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-badge">🏆 المراحل</div>
+        <div class="stat-value" id="stagesCount">0</div>
+        <div class="stat-label">المراحل المكتملة</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-badge">📚 الدروس</div>
+        <div class="stat-value" id="finishedCount">0</div>
+        <div class="stat-label">الدروس المنتهية</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="bottom-frame"></div>
+
+<script>
+/* ============================================================
+   🎨 الخلفية المتحركة
+   ✅ إصلاح: animationDelay سالب → لا فقاعات فور فتح الصفحة
+   ============================================================ */
+function createAnimatedBackground() {
+  const bg = document.getElementById("animatedBg");
+
+  // 1️⃣ فقاعات صاعدة — تبدأ موزعة على الشاشة
+  for (let i = 0; i < 15; i++) {
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    const size = 30 + Math.random() * 100;
+    const duration = 14 + Math.random() * 20;
+    bubble.style.width = size + "px";
+    bubble.style.height = size + "px";
+    bubble.style.left = Math.random() * 100 + "%";
+    bubble.style.animationDuration = duration + "s";
+    bubble.style.animationDelay = -(Math.random() * duration) + "s";
+    bg.appendChild(bubble);
+  }
+
+  // 2️⃣ أشكال هندسية دوارة — تبدأ موزعة
+  for (let i = 0; i < 6; i++) {
+    const shape = document.createElement("div");
+    shape.className = "shape";
+    const size = 50 + Math.random() * 90;
+    const duration = 25 + Math.random() * 30;
+    shape.style.width = size + "px";
+    shape.style.height = size + "px";
+    shape.style.left = (5 + Math.random() * 90) + "%";
+    shape.style.top = (5 + Math.random() * 90) + "%";
+    shape.style.borderRadius = Math.random() > 0.5 ? "50%" : "12%";
+    shape.style.animationDuration = duration + "s";
+    shape.style.animationDelay = -(Math.random() * duration) + "s";
+    bg.appendChild(shape);
+  }
+
+  // 3️⃣ دوائر متوسعة — تبدأ موزعة
+  for (let i = 0; i < 5; i++) {
+    const pulse = document.createElement("div");
+    pulse.className = "pulse-circle";
+    const size = 40 + Math.random() * 60;
+    const duration = 5 + Math.random() * 4;
+    pulse.style.width = size + "px";
+    pulse.style.height = size + "px";
+    pulse.style.left = (10 + Math.random() * 80) + "%";
+    pulse.style.top = (10 + Math.random() * 80) + "%";
+    pulse.style.animationDuration = duration + "s";
+    pulse.style.animationDelay = -(Math.random() * duration) + "s";
+    bg.appendChild(pulse);
+  }
+}
+
+/* ============================================================
+   ⚙️ الإعدادات
+   ============================================================ */
+const CONFIG = {
+  storage: {
+    dbName: "LessonsDB",
+    storeName: "progress",
+    version: 1,
+  },
+
+  player: {
+    nameKey:   "player_name",
+    avatarKey: "player_avatar",
+    ageKey:    "player_age",
+  },
+
+  stats: {
+    lessonsStagesKey:    "lessons_stages_count",
+    exercisesStagesKey:  "exercises_stages_count",
+    solvedLessonsKey:    "solved_lessons_list",
+    solvedExercisesKey:  "solved_exercises_list",
+  },
+
+  finishUrl: "index.html",
+};
+
+/* ============================================================
+   🔙 زر الخروج
+   ============================================================ */
+document.getElementById("finishBtn").onclick = () => {
+  window.location.href = CONFIG.finishUrl;
+};
+
+/* ============================================================
+   💾 IndexedDB
+   ============================================================ */
+const DB = {
+  db: null,
+
+  async open() {
+    if (this.db) return this.db;
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(CONFIG.storage.dbName, CONFIG.storage.version);
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(CONFIG.storage.storeName)) {
+          db.createObjectStore(CONFIG.storage.storeName, { keyPath: 'lessonId' });
+        }
+      };
+      req.onsuccess = (e) => {
+        this.db = e.target.result;
+        resolve(this.db);
+      };
+      req.onerror = () => reject(req.error);
+    });
+  },
+
+  async getAll() {
+    try {
+      const db = await this.open();
+      return new Promise((resolve) => {
+        const tx = db.transaction(CONFIG.storage.storeName, 'readonly');
+        const req = tx.objectStore(CONFIG.storage.storeName).getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => resolve([]);
+      });
+    } catch (e) {
+      console.error('DB getAll error:', e);
+      return [];
+    }
+  },
+};
+
+/* ============================================================
+   👤 إدارة اللاعب
+   ============================================================ */
+const avatarWrapper = document.getElementById("avatarWrapper");
+const avatarImg     = document.getElementById("avatarImg");
+const avatarInput   = document.getElementById("avatarInput");
+const playerName    = document.getElementById("playerName");
+const saveBtn       = document.getElementById("saveBtn");
+const saveMsg       = document.getElementById("saveMsg");
+
+let originalName = "";
+
+function loadPlayerData() {
+  const savedName   = localStorage.getItem(CONFIG.player.nameKey);
+  const savedAvatar = localStorage.getItem(CONFIG.player.avatarKey);
+
+  if (savedName) {
+    playerName.value = savedName;
+    originalName = savedName;
+  }
+
+  if (savedAvatar) {
+    avatarImg.src = savedAvatar;
+  } else if (savedName) {
+    avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(savedName)}&size=200&background=2e7d32&color=fff`;
+  }
+}
+
+function updateSaveButtonVisibility() {
+  const currentName = playerName.value.trim();
+  const hasChanged  = currentName !== originalName;
+  saveBtn.classList.toggle("visible", hasChanged);
+}
+
+playerName.addEventListener("input", updateSaveButtonVisibility);
+
+avatarWrapper.onclick = () => avatarInput.click();
+
+avatarInput.onchange = (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    showMsg("❌ الرجاء اختيار صورة صحيحة", true);
+    return;
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    showMsg("❌ حجم الصورة كبير (الحد 2MB)", true);
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const base64 = ev.target.result;
+    avatarImg.src = base64;
+    try {
+      localStorage.setItem(CONFIG.player.avatarKey, base64);
+      showMsg("✅ تم حفظ الصورة محلياً");
+    } catch (err) {
+      showMsg("❌ فشل الحفظ (المساحة ممتلئة)", true);
+      console.error(err);
+    }
+  };
+  reader.readAsDataURL(file);
+};
+
+saveBtn.onclick = () => {
+  const name = playerName.value.trim();
+
+  if (!name) {
+    showMsg("❌ اكتب اسماً أولاً", true);
+    return;
+  }
+
+  localStorage.setItem(CONFIG.player.nameKey, name);
+  originalName = name;
+
+  if (!localStorage.getItem(CONFIG.player.avatarKey)) {
+    avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=200&background=2e7d32&color=fff`;
+  }
+
+  showMsg("✅ تم حفظ الاسم");
+  updateSaveButtonVisibility();
+};
+
+function showMsg(text, isError = false) {
+  saveMsg.textContent = text;
+  saveMsg.style.color = isError ? "#c62828" : "var(--frame-color)";
+  clearTimeout(showMsg._t);
+  showMsg._t = setTimeout(() => { saveMsg.textContent = ""; }, 2500);
+}
+
+playerName.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && saveBtn.classList.contains("visible")) {
+    saveBtn.click();
+  }
+});
+
+/* ============================================================
+   📊 حساب الإحصائيات
+   ============================================================ */
+async function countFinishedLessons() {
+  try {
+    const all = await DB.getAll();
+    const finished = all.filter(item => item.finished === true);
+    if (finished.length > 0) return finished.length;
+  } catch (e) {
+    console.warn('IndexedDB fallback:', e);
+  }
+  return parseInt(localStorage.getItem(CONFIG.stats.lessonsStagesKey) || "0", 10);
+}
+
+function countFinishedExercises() {
+  return parseInt(localStorage.getItem(CONFIG.stats.exercisesStagesKey) || "0", 10);
+}
+
+function getTotalStages() {
+  const lessons   = parseInt(localStorage.getItem(CONFIG.stats.lessonsStagesKey)   || "0", 10);
+  const exercises = parseInt(localStorage.getItem(CONFIG.stats.exercisesStagesKey) || "0", 10);
+  return lessons + exercises;
+}
+
+function getSolvedLessonsList() {
+  try {
+    return JSON.parse(localStorage.getItem(CONFIG.stats.solvedLessonsKey) || "[]");
+  } catch (_) { return []; }
+}
+function getSolvedExercisesList() {
+  try {
+    return JSON.parse(localStorage.getItem(CONFIG.stats.solvedExercisesKey) || "[]");
+  } catch (_) { return []; }
+}
+
+/* ============================================================
+   🚀 التشغيل
+   ============================================================ */
+async function refreshStats() {
+  const lessonsCount = await countFinishedLessons();
+  document.getElementById("finishedCount").textContent = lessonsCount;
+
+  const totalStages = getTotalStages();
+  document.getElementById("stagesCount").textContent = totalStages;
+
+  console.log("📚 الدروس المنتهية:", lessonsCount);
+  console.log("🏋️ التمارين المكتملة:", countFinishedExercises());
+  console.log("🏆 مجموع المراحل:", totalStages);
+  console.log("📋 الدروس المحلولة:", getSolvedLessonsList());
+  console.log("📋 التمارين المحلولة:", getSolvedExercisesList());
+}
+
+(async () => {
+  createAnimatedBackground();
+  loadPlayerData();
+  await refreshStats();
+
+  window.addEventListener('focus', refreshStats);
+})();
+</script>
+
+</body>
+</html>

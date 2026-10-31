@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تمرين المرحلة الثالثة</title>
+<link rel="stylesheet" href="test_code/t_3.css">
+</head>
+<body>
+
+<!-- 🟢 الشريط العلوي -->
+<div class="top-frame">
+  <div class="lesson-name" id="lessonName">—</div>
+  <button class="exit-btn" id="exitBtn">&gt;</button>
+</div>
+
+<!-- 📄 محتوى الصفحة -->
+<div class="page-wrapper">
+  <div class="content-wrapper">
+
+    <!-- شريط التقدم -->
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-text" id="progressText">السؤال 1 من 3</div>
+
+    <!-- السؤال -->
+    <div class="question-box" id="questionBox"></div>
+
+    <!-- الخيارات -->
+    <div class="options-list" id="optionsList"></div>
+
+    <!-- رسالة النتيجة -->
+    <div class="result-msg" id="resultMsg"></div>
+  </div>
+</div>
+
+<!-- 🎛️ الأزرار الثابتة -->
+<div class="fixed-actions">
+  <button class="nav-btn reset" id="resetBtn">🔄 إعادة</button>
+</div>
+
+<div class="bottom-frame"></div>
+
+<!-- 🎉 طبقة الفوز -->
+<div class="win-overlay" id="winOverlay">
+  <div class="win-rings"></div>
+  <div class="win-rings delay"></div>
+  <div class="win-icon">🏆</div>
+  <div class="win-text">أحسنت!</div>
+</div>
+
+<!-- 💀 طبقة الخسارة -->
+<div class="lose-overlay" id="loseOverlay">
+  <div class="lose-icon">💔</div>
+  <div class="lose-text">للأسف، خسرت!</div>
+</div>
+
+<!-- 🔊 صوت الأزرار -->
+<audio id="clickSound" src="sonud/buttem.mp3" preload="auto"></audio>
+
+<!-- ⚙️ الإعدادات -->
+<script>
+const CONFIG = {
+  id: "فضل الصيام_تدريب الثلاث",
+  stageNumber: 5,
+
+  exitUrl: "stages.html",
+  exitConfirmMessage: "هل تريد الخروج؟",
+
+  exercisesStagesKey: "exercises_stages_count",
+  solvedListKey:      "solved_exercises_list",
+
+  // 🔢 عدد الأسئلة التي ستُعرض (عشوائية من القائمة)
+  questionsToShow: 2,
+
+  // 📚 كل الأسئلة (اختر منها عشوائياً)
+  questions: [
+    {
+      question: "كم باب في الجنة؟",
+      options: ["سبعة", "تسعة", "ثمانية"],
+      correct: 2   // index الخيار الصحيح (0,1,2)
+    },
+    {
+      question: "من أي باب يدخل الصائم؟",
+      options: ["الصلاة", "الذكاء", "الريان"],
+      correct: 2
+    },
+   
+  ],
+
+  successMessage: "✅ أحسنت! أكملت المرحلة بنجاح",
+  wrongMessage:   "❌ إجابة خاطئة!",
+  loseMessage:    "💔 للأسف، خسرت!",
+
+  successRedirectUrl: "stages.html",
+  successRedirectDelay: 2500,
+
+  loseRedirectUrl: "stages.html",
+  loseRedirectDelay: 2500,
+
+  winText: "أحسنت!",
+  winDuration: 2000,
+};
+</script>
+
+<!-- 🚀 منطق التطبيق -->
+<script src="test_code/t_3.js"></script>
+
+</body>
+</html>

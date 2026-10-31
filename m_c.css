@@ -1,0 +1,69 @@
+/* ============================================================
+   🎨 theme.css
+   المتغيرات العامة + الوضع الداكن + أحجام الخط
+   يُضمَّن في كل الصفحات قبل CSS الخاص بالصفحة
+   ============================================================ */
+
+:root {
+  --bg-page: #f0e8d8;
+  --text-color: #3d3d3d;
+
+  --frame-color: #2e7d32;
+  --frame-height: 50px;
+  --frame-text: #ffffff;
+  --exit-text: #cccccc;
+
+  --item-bg: #1b5e20;
+  --item-text: #ffffff;
+
+  --label-color: #1b3a1f;
+  --cream-color: #f5e6c8;
+  --divider-color: #000000;
+
+  --reset-bg: #c62828;
+  --reset-text: #ffffff;
+
+  /* بطاقات */
+  --card-bg: #ffffff;
+  --card-border: #e0d8c8;
+  --card-shadow: rgba(0,0,0,0.06);
+  --desc-color: #666666;
+  --btn-bg: #f9f7f2;
+  --btn-bg-hover: #f1f8e9;
+  --btn-cancel-bg: #f0f0f0;
+  --btn-cancel-text: #4a4a4a;
+}
+
+/* 🌙 الوضع الداكن */
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  --bg-page: #1a1a1a;
+  --text-color: #e8e8e8;
+  --frame-color: #1b5e20;
+  --frame-text: #ffffff;
+  --label-color: #ffffff;
+  --cream-color: #2c2c2c;
+  --divider-color: #555555;
+
+  --card-bg: #2a2a2a;
+  --card-border: #444444;
+  --card-shadow: rgba(0,0,0,0.4);
+  --desc-color: #aaaaaa;
+  --btn-bg: #333333;
+  --btn-bg-hover: #3a3a3a;
+  --btn-cancel-bg: #3a3a3a;
+  --btn-cancel-text: #ffffff;
+}
+
+/* 🔠 أحجام الخط */
+html.font-small  { font-size: 13px; }
+html.font-medium { font-size: 15px; }
+html.font-large  { font-size: 18px; }
+
+/* أساسيات مشتركة */
+html, body { height: 100%; }
+body {
+  background: var(--bg-page);
+  color: var(--text-color);
+  transition: background 0.3s ease, color 0.3s ease;
+}

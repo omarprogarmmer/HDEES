@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الإعدادات</title>
+
+<style>
+/* ============================================================
+   🎨 أنماط صفحة الإعدادات (مستقلة تماماً)
+   ============================================================ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+:root {
+  --bg-page: #f0e8d8;
+  --text-color: #3d3d3d;
+
+  --frame-color: #2e7d32;
+  --frame-height: 50px;
+  --frame-text: #ffffff;
+  --exit-text: #cccccc;
+
+  --item-bg: #1b5e20;
+  --label-color: #1b3a1f;
+
+  --reset-bg: #c62828;
+
+  --card-bg: #ffffff;
+  --card-border: #e0d8c8;
+  --card-shadow: rgba(0,0,0,0.06);
+  --desc-color: #666666;
+  --btn-cancel-bg: #f0f0f0;
+  --btn-cancel-text: #4a4a4a;
+}
+
+html, body { height: 100%; }
+body {
+  min-height: 100vh;
+  background: var(--bg-page);
+  color: var(--text-color);
+}
+
+/* 🟢 الشريط العلوي */
+.top-frame {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--frame-height);
+  background: var(--frame-color);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px; z-index: 999;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+.lesson-name { font-size: 1.05rem; font-weight: 700; color: var(--frame-text); }
+
+.exit-btn {
+  width: 38px; height: 38px; padding: 0;
+  background: transparent; color: var(--exit-text);
+  border: 2px solid var(--exit-text); border-radius: 50%;
+  font-size: 1.4rem; font-weight: 900; line-height: 1;
+  cursor: pointer; transition: 0.25s;
+  display: flex; align-items: center; justify-content: center;
+  font-family: Arial, sans-serif;
+}
+.exit-btn:hover {
+  color: #ffffff; border-color: #ffffff;
+  background: rgba(255,255,255,0.15);
+}
+
+.bottom-frame {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--frame-height); background: var(--frame-color);
+  z-index: 999; box-shadow: 0 -3px 10px rgba(0,0,0,0.15);
+}
+
+/* 📄 محتوى الصفحة */
+.page-wrapper {
+  padding: calc(var(--frame-height) + 24px) 20px calc(var(--frame-height) + 30px);
+  display: flex; justify-content: center;
+}
+.content-wrapper {
+  width: 100%; max-width: 620px;
+  animation: fadeIn 0.45s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ⚙️ بطاقة إعداد */
+.setting-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 3px 10px var(--card-shadow);
+}
+
+.setting-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--label-color);
+  margin-bottom: 6px;
+}
+
+.setting-desc {
+  font-size: 0.9rem;
+  color: var(--desc-color);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* 🔄 بطاقة الخطر */
+.setting-card.danger {
+  border-color: #ef9a9a;
+  background: #fff5f5;
+}
+
+.danger-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--reset-bg);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+  font-family: inherit;
+}
+.danger-btn:hover {
+  background: #b71c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(198, 40, 40, 0.35);
+}
+.danger-btn:active { transform: scale(0.98); }
+
+/* 📢 رسالة */
+.result-msg {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 15px;
+  min-height: 24px;
+  color: var(--item-bg);
+}
+.result-msg.error { color: #c62828; }
+
+/* 💬 نافذة التأكيد */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  padding: 20px;
+}
+.confirm-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.confirm-box {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 28px 24px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+  transform: scale(0.9);
+  transition: transform 0.25s ease;
+  color: var(--text-color);
+}
+.confirm-overlay.show .confirm-box { transform: scale(1); }
+
+.confirm-icon { font-size: 3rem; margin-bottom: 10px; }
+
+.confirm-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--label-color);
+  margin-bottom: 8px;
+}
+
+.confirm-desc {
+  font-size: 0.95rem;
+  color: var(--desc-color);
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+
+.confirm-actions { display: flex; gap: 10px; }
+
+.confirm-btn {
+  flex: 1;
+  padding: 13px 16px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+  font-family: inherit;
+  border: none;
+}
+
+.confirm-btn.cancel {
+  background: var(--btn-cancel-bg);
+  color: var(--btn-cancel-text);
+}
+.confirm-btn.cancel:hover { filter: brightness(0.92); }
+
+.confirm-btn.confirm {
+  background: var(--reset-bg);
+  color: #ffffff;
+}
+.confirm-btn.confirm:hover { background: #b71c1c; }
+
+/* 📱 الجوال */
+@media (max-width: 480px) {
+  .setting-card { padding: 16px; }
+  .setting-title { font-size: 1.05rem; }
+  .danger-btn { font-size: 0.9rem; padding: 12px; }
+  .confirm-box { padding: 22px 18px; }
+  .confirm-title { font-size: 1.15rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- 🟢 الشريط العلوي -->
+<div class="top-frame">
+  <div class="lesson-name">⚙️ الإعدادات</div>
+  <button class="exit-btn" id="exitBtn">&gt;</button>
+</div>
+
+<!-- 📄 محتوى الصفحة -->
+<div class="page-wrapper">
+  <div class="content-wrapper">
+
+    <!-- 🔄 إعادة اللعبة -->
+    <div class="setting-card danger">
+      <div class="setting-title">🔄 إعادة اللعبة</div>
+      <div class="setting-desc">سيتم حذف كل تقدمك والبدء من جديد — لا يمكن التراجع!</div>
+      <button class="danger-btn" id="resetGameBtn">🗑️ إعادة اللعبة من الأول</button>
+    </div>
+
+    <!-- 📢 رسالة -->
+    <div class="result-msg" id="resultMsg"></div>
+  </div>
+</div>
+
+<div class="bottom-frame"></div>
+
+<!-- 💬 نافذة التأكيد -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-title">هل أنت متأكد؟</div>
+    <div class="confirm-desc">سيتم حذف كل تقدمك في اللعبة نهائياً.</div>
+    <div class="confirm-actions">
+      <button class="confirm-btn cancel" id="cancelReset">إلغاء</button>
+      <button class="confirm-btn confirm" id="confirmReset">نعم، أعد اللعبة</button>
+    </div>
+  </div>
+</div>
+
+<!-- 🔊 صوت الأزرار -->
+<audio id="clickSound" src="sonud/buttem.mp3" preload="auto"></audio>
+
+<script>
+/* ============================================================
+   ⚙️ منطق صفحة الإعدادات — إعادة اللعبة فقط
+   ============================================================ */
+(function() {
+  const CONFIG = {
+    exitUrl: "stages.html",
+    exitConfirmMessage: "هل تريد الخروج؟",
+    exercisesStagesKey: "exercises_stages_count",
+    solvedListKey: "solved_exercises_list"
+  };
+
+  const exitBtn        = document.getElementById('exitBtn');
+  const resultMsg      = document.getElementById('resultMsg');
+  const resetGameBtn   = document.getElementById('resetGameBtn');
+  const confirmOverlay = document.getElementById('confirmOverlay');
+  const cancelReset    = document.getElementById('cancelReset');
+  const confirmReset   = document.getElementById('confirmReset');
+  const clickSound     = document.getElementById('clickSound');
+
+  /* ---------- 🔊 الصوت ---------- */
+  function playSound() {
+    if (clickSound) {
+      clickSound.currentTime = 0;
+      clickSound.play().catch(() => {});
+    }
+  }
+
+  /* ---------- زر إعادة اللعبة ---------- */
+  resetGameBtn.addEventListener('click', () => {
+    playSound();
+    confirmOverlay.classList.add('show');
+  });
+
+  cancelReset.addEventListener('click', () => {
+    playSound();
+    confirmOverlay.classList.remove('show');
+  });
+
+  confirmReset.addEventListener('click', () => {
+    playSound();
+
+    // 🗑️ احذف كل مفاتيح تقدم اللعبة
+    localStorage.removeItem(CONFIG.exercisesStagesKey);
+    localStorage.removeItem(CONFIG.solvedListKey);
+
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('solved_') || key.startsWith('exercises_')) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    confirmOverlay.classList.remove('show');
+    resultMsg.textContent = "✅ تم إعادة اللعبة بنجاح!";
+    resultMsg.classList.remove('error');
+
+    setTimeout(() => {
+      window.location.href = CONFIG.exitUrl;
+    }, 1500);
+  });
+
+  /* ---------- زر الخروج ---------- */
+  exitBtn.addEventListener('click', () => {
+    if (confirm(CONFIG.exitConfirmMessage)) {
+      window.location.href = CONFIG.exitUrl;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

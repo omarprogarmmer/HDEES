@@ -1,0 +1,173 @@
+// ⚠️ غيّر الرقم إلى v3 عند أي تعديل
+const CACHE_NAME = 'my-app-v3';
+
+const PRECACHE_ASSETS = [
+  './',
+  './index.html',
+  './about.html',      // ← الصفحة الثانية
+  './manifest.json',
+  './g1_level1.html',
+  './g1_t1.html',
+  './g1_t2.html',
+  './profile.html',
+  './stages.html',
+];
+
+// التثبيت: حمّل كل الملفات مرة واحدة
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(PRECACHE_ASSETS))
+      .then(() => self.skipWaiting())
+  );
+});
+
+// التفعيل: احذف الكاش القديم
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      )
+    ).then(() => self.clients.claim())
+  );
+});
+
+// الجلب: cache-first
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+
+  event.respondWith(
+    caches.match(event.request).then(cached => {
+      if (cached) return cached;
+
+      return fetch(event.request).then(response => {
+        if (!response || response.status !== 200) return response;
+
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        return response;
+      }).catch(() => {
+        // إذا فشل الاتصال وطلب HTML → أرجع index.html
+        if (event.request.headers.get('accept')?.includes('text/html')) {
+          return caches.match('./index.html');
+        }
+      });
+    })
+  );
+});{
+  "name": "اسم تطبيقي",
+  "short_name": "تطبيقي",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
+----------------
+// ⚠️ غيّر الرقم إلى v4 عند أي تعديل
+const CACHE_NAME = 'my-app-v4';
+
+const PRECACHE_ASSETS = [
+  './',
+  './style_test.css',
+  './index.html',
+  './about.html',      // ← الصفحة الثانية
+  './manifest.json',
+  './g1_level1.html',
+  './g1_t1.html',
+  './g1_t2.html',
+  './profile.html',
+  './stages.html',
+  './script_test.js',
+
+
+];
+
+// التثبيت: حمّل كل الملفات مرة واحدة
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(PRECACHE_ASSETS))
+      .then(() => self.skipWaiting())
+  );
+});
+
+// التفعيل: احذف الكاش القديم
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      )
+    ).then(() => self.clients.claim())
+  );
+});
+
+// الجلب: cache-first مع احتياطي عند الفشل
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+
+  // تجاهل طلبات chrome-extension وغيرها
+  if (!event.request.url.startsWith('http')) return;
+
+  event.respondWith(
+    caches.match(event.request).then(cached => {
+
+      // ✅ الموجود في الكاش يُعاد مباشرة
+      if (cached) return cached;
+
+      return fetch(event.request).then(response => {
+        // لا تخزّن الاستجابات غير الصالحة
+        if (!response || response.status !== 200 || response.type === 'opaque') {
+          return response;
+        }
+
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        return response;
+
+      }).catch(() => {
+
+        // ✅ إذا فشل الاتصال وطلب HTML → أرجع index.html المحفوظ
+        const accept = event.request.headers.get('accept') || '';
+        if (accept.includes('text/html')) {
+          return caches.match('./index.html').then(fallback => {
+            if (fallback) return fallback;
+
+            // إذا حتى index.html غير موجود → صفحة احتياطية مضمّنة
+            return new Response(
+              '<!DOCTYPE html><html lang="ar" dir="rtl"><head>' +
+              '<meta charset="UTF-8">' +
+              '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+              '<title>غير متصل</title></head>' +
+              '<body style="font-family:sans-serif;text-align:center;padding:3rem;background:#f0e8d8;">' +
+              '<h2 style="color:#0d47a1;">⚠️ غير متصل بالإنترنت</h2>' +
+              '<p style="color:#555;margin-top:1rem;">بيانات التطبيق بحاجة للتحديث</p>' +
+              '<p style="color:#555;">يرجى الاتصال بالإنترنت أولاً ثم إعادة فتح التطبيق</p>' +
+              '<button onclick="location.reload()" style="margin-top:2rem;padding:12px 24px;background:#0d47a1;color:#fff;border:none;border-radius:8px;font-size:16px;">🔄 إعادة المحاولة</button>' +
+              '</body></html>',
+              { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+            );
+          });
+        }
+
+        // ✅ للطلبات الأخرى (CSS/JS/صور) → أرجع استجابة نظيفة
+        return new Response('', {
+          status: 408,
+          statusText: 'Offline'
+        });
+      });
+    })
+  );
+});
+
+// 📩 رسائل من الصفحة (KEEP_ALIVE)
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'KEEP_ALIVE') {
+    console.log('💚 Service Worker نشط');
+  }
+});

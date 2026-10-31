@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تمرين الاختيار والوضع</title>
+<link rel="stylesheet" href="test_code/style_test.css">
+</head>
+<body>
+
+<!-- 🟢 الشريط العلوي -->
+<div class="top-frame">
+  <div class="lesson-name" id="lessonName">—</div>
+  <button class="exit-btn" id="exitBtn">&gt;</button>
+</div>
+
+<!-- 📄 محتوى الصفحة -->
+<div class="page-wrapper">
+  <div class="content-wrapper">
+    <div id="dropZone"></div>
+    <div class="divider"></div>
+    <div class="items-pool" id="itemsPool"></div>
+    <div class="result-msg" id="resultMsg"></div>
+  </div>
+</div>
+
+<!-- 🎛️ الأزرار الثابتة -->
+<div class="fixed-actions">
+  <button class="nav-btn reset" id="resetBtn">🔄 إعادة </button>
+  <button class="nav-btn check" id="checkBtn">✅ تحقق</button>
+</div>
+
+<div class="bottom-frame"></div>
+
+<!-- 🎉 طبقة الفوز -->
+<div class="win-overlay" id="winOverlay">
+  <div class="win-rings"></div>
+  <div class="win-rings delay"></div>
+  <div class="win-icon">🏆</div>
+  <div class="win-text">أحسنت!</div>
+</div>
+
+<!-- 🔊 صوت الأزرار -->
+<audio id="clickSound" src="sonud/buttem.mp3" preload="auto"></audio>
+
+<!-- ⚙️ الإعدادات (CONFIG) — قبل السكربت -->
+<script>
+const CONFIG = {
+  id: "  _التدريب الأول ",
+  stageNumber: 3,
+
+  exitUrl: "stages.html",
+  exitConfirmMessage: "هل تريد الخروج؟",
+
+  exercisesStagesKey: "exercises_stages_count",
+  solvedListKey:      "solved_exercises_list",
+
+  items: [
+    { id: "item_1", text: "  ",  label: "عني النبيﷺ :" },
+    { id: "item_2", text: "  ",          label: "  " },
+    { id: "item_3", text: "  ",          label: " " },
+  ],
+
+  successMessage: "✅ أحسنت! كل الإجابات صحيحة",
+  emptyMessage:   "⚠️ املأ كل المربعات أولاً",
+  retryMessage:   "❌ حاول مرة أخرى",
+
+  resetConfirmMessage: "",
+
+  successRedirectUrl: "stages.html",
+  successRedirectDelay: 2000,
+
+  winText: "أحسنت!",
+  winDuration: 2000,
+};
+</script>
+
+<!-- 🚀 منطق التطبيق -->
+<script src="test_code/script_test.js"></script>
+
+</body>
+</html>

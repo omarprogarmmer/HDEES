@@ -1,0 +1,531 @@
+/* ============================================================
+   🔄 إعادة ضبط عامة (Reset)
+   ------------------------------------------------------------
+   إزالة الهوامش والحشوات الافتراضية من جميع العناصر
+   توحيد نظام قياس الصندوق (border-box) لسهولة الحسابات
+   تحديد الخط الافتراضي لكل الصفحة
+   ============================================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+
+/* ============================================================
+   🎨 المتغيرات العامة (CSS Variables)
+   ------------------------------------------------------------
+   كل الألوان والأحجام في مكان واحد لتسهيل التعديل
+   ============================================================ */
+:root {
+  /* ---- الألوان الأساسية للصفحة ---- */
+  --bg-page: #f5f3ee;          /* خلفية الصفحة */
+  --text-color: #3d3d3d;       /* لون النص العام */
+  --border-color: #e0dbd0;     /* لون الحدود */
+  --box-bg: #ffffff;           /* خلفية صندوق النص */
+
+  /* ---- ألوان أزرار التنقل ---- */
+  --btn-bg: #ffffff;
+  --btn-text: #4a4a4a;
+  --btn-border: #c9c2b5;
+  --btn-next-bg: #3a4a3f;
+  --btn-next-text: #ffffff;
+  --btn-finish-bg: #2e7d32;
+
+  /* ---- الشريط العلوي والسفلي ---- */
+  --frame-color: #2e7d32;      /* لون الشريط الأخضر */
+  --frame-height: 50px;        /* ارتفاع الشريط */
+  --frame-text: #ffffff;       /* لون نص الشريط */
+  --exit-text: #cccccc;        /* لون زر الخروج */
+
+  /* ============================================================
+     📏 أحجام النصوص (عدّل من هنا فقط)
+     ------------------------------------------------------------
+     غيّر هذه القيم لتتحكم بحجم كل نص في الدرس
+     ============================================================ */
+  --font-lesson-name: 16px;    /* 🏷️ اسم الدرس في الشريط العلوي */
+  --font-slide-text: 24px;     /* 📖 نص الصفحة الرئيسي (تم تكبيره) */
+  --font-page-number: 12px;    /* 🔢 رقم الصفحة */
+  --font-nav-btn: 15px;        /* 🎛️ أزرار التنقل (السابق/التالي) */
+  --font-final-msg: 20px;      /* 📢 رسالة آخر صفحة */
+  --font-listen-btn: 15px;     /* 🔊 زر الاستماع */
+  --font-win-text: 34px;       /* 🏆 نص الفوز */
+
+  /* ---- ارتفاع أسطر النص (للقراءة المريحة) ---- */
+  --line-height-slide: 2;      /* المسافة بين أسطر النص العربي */
+}
+
+
+/* ============================================================
+   📄 الصفحة والجسم
+   ============================================================ */
+html, body {
+  height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg-page);
+  color: var(--text-color);
+  /* مساحة سفلية حتى لا يغطي الشريط السفلي المحتوى */
+  padding-bottom: 120px;
+}
+
+
+/* ============================================================
+   🟢 الشريط العلوي (Top Frame)
+   ------------------------------------------------------------
+   ثابت في أعلى الصفحة، يحتوي على اسم الدرس وزر الخروج
+   ============================================================ */
+.top-frame {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--frame-height);
+  background: var(--frame-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  z-index: 999;                 /* فوق كل العناصر */
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+/* 🏷️ اسم الدرس */
+.lesson-name {
+  font-size: var(--font-lesson-name);
+  font-weight: 700;
+  color: var(--frame-text);
+}
+
+
+/* ============================================================
+   ❌ زر الخروج (دائري في الشريط العلوي)
+   ============================================================ */
+.exit-btn {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  background: transparent;
+  color: var(--exit-text);
+  border: 2px solid var(--exit-text);
+  border-radius: 50%;           /* شكل دائري */
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  transition: 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+}
+
+/* ✨ تأثير عند المرور بالماوس */
+.exit-btn:hover {
+  color: #ffffff;
+  border-color: #ffffff;
+  background: rgba(255,255,255,0.15);
+}
+
+
+/* ============================================================
+   🟢 الشريط السفلي (Bottom Frame)
+   ------------------------------------------------------------
+   شريط أخضر ثابت في الأسفل، بدون محتوى (تجميلي)
+   ============================================================ */
+.bottom-frame {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--frame-height);
+  background: var(--frame-color);
+  z-index: 999;
+  box-shadow: 0 -3px 10px rgba(0,0,0,0.15);
+}
+
+
+/* ============================================================
+   🎛️ منطقة أزرار التنقل الثابتة
+   ------------------------------------------------------------
+   فوق الشريط السفلي مباشرة، تحتوي على زرّي السابق/التالي
+   ============================================================ */
+.fixed-actions {
+  position: fixed;
+  bottom: var(--frame-height);   /* فوق الشريط السفلي بالضبط */
+  left: 0;
+  right: 0;
+  background: var(--bg-page);
+  padding: 12px 22px;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  z-index: 998;
+  border-top: 1px solid var(--border-color);
+}
+
+/* 🔘 الأزرار نفسها (السابق والالتالي) */
+.nav-btn {
+  flex: 1;
+  max-width: 320px;
+  padding: 12px 20px;
+  border: 1.5px solid var(--btn-border);
+  border-radius: 8px;
+  font-size: var(--font-nav-btn);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+}
+
+/* 🚫 الزر المعطّل (مثل السابق في الصفحة الأولى) */
+.nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ▶️ زر التالي (خلفية داكنة) */
+.nav-btn.next {
+  background: var(--btn-next-bg);
+  color: var(--btn-next-text);
+  border-color: var(--btn-next-bg);
+}
+
+/* ✅ زر الإنهاء (خلفية خضراء) */
+.nav-btn.finish {
+  background: var(--btn-finish-bg);
+  color: #fff;
+  border-color: var(--btn-finish-bg);
+}
+
+
+/* ============================================================
+   📢 رسالة آخر صفحة
+   ------------------------------------------------------------
+   تظهر فقط عند الوصول لآخر صفحة، مع تأثير ظهور ناعم
+   ============================================================ */
+.final-message {
+  position: fixed;
+  bottom: calc(var(--frame-height) + 80px);
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: var(--font-final-msg);
+  font-weight: 800;
+  color: #c62828;               /* أحمر مميز */
+  letter-spacing: 0.5px;
+  opacity: 0;                   /* مخفية افتراضيًا */
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;         /* لا تعترض النقرات */
+  z-index: 997;
+}
+
+/* 👁️ عند إضافة الكلاس show تظهر الرسالة */
+.final-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ============================================================
+   📄 غلاف المحتوى (الصورة + النص)
+   ============================================================ */
+.page-wrapper {
+  padding: calc(var(--frame-height) + 30px) 15px 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.content-wrapper {
+  width: 100%;
+  max-width: 780px;             /* عرض أقصى مريح للقراءة */
+  animation: fadeIn 0.45s ease; /* تأثير الظهور */
+}
+
+/* ✨ حركة الظهور التدريجي */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ============================================================
+   🖼️ صورة الشريحة
+   ============================================================ */
+.slide-image {
+  display: block;
+  margin: 0 auto 24px;          /* في المنتصف + مسافة سفلية */
+  max-width: 75%;
+  width: 100%;
+  max-height: 250px;            /* ارتفاع أقصى للصورة */
+  object-fit: contain;          /* الحفاظ على نسبة الأبعاد */
+  border-radius: 10px;
+}
+
+
+/* ============================================================
+   📦 صندوق النص (Text Box)
+   ------------------------------------------------------------
+   الصندوق الأبيض الذي يحتوي على النص ورقم الصفحة وزر الاستماع
+   ============================================================ */
+.text-box {
+  background: var(--box-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 24px 26px;
+  position: relative;           /* لتمركز رقم الصفحة */
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+}
+
+/* 🔢 رقم الصفحة (شارة في الأعلى) */
+.page-number {
+  position: absolute;
+  top: -12px;                   /* يبرز قليلاً فوق الصندوق */
+  right: 20px;
+  background: var(--frame-color);
+  color: #fff;
+  font-size: var(--font-page-number);
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+
+/* ============================================================
+   📖 نص الشريحة (النص الرئيسي)
+   ------------------------------------------------------------
+   🔧 هذا هو النص الذي يظهر تحت الصورة مباشرةً
+   ➡️ لتعديل حجمه: غيّر --font-slide-text في :root
+   ============================================================ */
+.slide-text {
+  font-size: var(--font-slide-text);      /* ← الحجم من المتغير */
+  line-height: var(--line-height-slide);  /* ← ارتفاع السطر */
+  color: var(--text-color);
+  word-wrap: break-word;                  /* كسر الكلمات الطويلة */
+}
+
+
+/* ============================================================
+   🔊 زر الاستماع (Listen Button)
+   ------------------------------------------------------------
+   زر أخضر لبدء/إيقاف تشغيل صوت الصفحة
+   ============================================================ */
+.listen-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 10px 22px;
+  background: var(--frame-color);
+  color: #ffffff;
+  border: none;
+  border-radius: 25px;          /* شكل كبسولة */
+  font-size: var(--font-listen-btn);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 3px 10px rgba(46, 125, 50, 0.3);
+  font-family: inherit;
+}
+
+/* ✨ عند المرور بالماوس */
+.listen-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(46, 125, 50, 0.45);
+}
+
+/* 🔽 عند الضغط */
+.listen-btn:active {
+  transform: translateY(0);
+}
+
+/* 🔴 الحالة النشطة (أثناء التشغيل) */
+.listen-btn.playing {
+  background: #c62828;
+  box-shadow: 0 3px 10px rgba(198, 40, 40, 0.4);
+  animation: pulsePlaying 1.4s ease-in-out infinite;
+}
+
+/* 🔊 أيقونة الزر */
+.listen-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* 💓 نبض خفيف أثناء التشغيل */
+@keyframes pulsePlaying {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+
+
+/* ============================================================
+   🎉 تأثير الفوز (Win Overlay)
+   ------------------------------------------------------------
+   طبقة تغطي الشاشة عند إكمال الدرس
+   ============================================================ */
+.win-overlay {
+  position: fixed;
+  inset: 0;                     /* تغطي الشاشة كاملة */
+  background: rgba(20, 40, 20, 0.55);
+  backdrop-filter: blur(4px);   /* ضبابية الخلفية */
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+/* 👁️ عند إضافة الكلاس show */
+.win-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+/* 🏆 أيقونة الكأس */
+.win-icon {
+  font-size: 100px;
+  line-height: 1;
+  color: #ffd54f;
+  text-shadow:
+    0 0 20px rgba(255, 213, 79, 0.8),
+    0 0 40px rgba(255, 213, 79, 0.5);
+  transform: scale(0) rotate(-180deg);
+  animation: winPop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 🎬 حركة ظهور الكأس */
+@keyframes winPop {
+  0%   { transform: scale(0) rotate(-180deg); }
+  60%  { transform: scale(1.25) rotate(10deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+
+/* 📝 نص الفوز (أحسنت!) */
+.win-text {
+  margin-top: 24px;
+  font-size: var(--font-win-text);
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 1px;
+  text-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: winTextIn 0.6s ease 0.35s forwards;
+}
+
+/* 🎬 حركة ظهور النص */
+@keyframes winTextIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ✨ الحلقات المتوسعة حول الكأس */
+.win-rings {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 213, 79, 0.6);
+  animation: ringExpand 1.4s ease-out infinite;
+  pointer-events: none;
+}
+.win-rings.delay {
+  animation-delay: 0.4s;        /* تأخير الحلقة الثانية */
+}
+
+@keyframes ringExpand {
+  0%   { transform: scale(0.6); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+
+/* ============================================================
+   🎊 قصاصات الاحتفال (Confetti)
+   ------------------------------------------------------------
+   قطع ملونة تتساقط من أعلى الشاشة عند الفوز
+   ============================================================ */
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 16px;
+  top: -20px;                   /* تبدأ فوق الشاشة */
+  opacity: 0.95;
+  animation: confettiFall linear forwards;
+  pointer-events: none;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0.4;
+  }
+}
+
+
+/* ============================================================
+   📱 استعلام الوسائط للجوال (Mobile)
+   ------------------------------------------------------------
+   تعديلات خاصة للشاشات الصغيرة (أقل من 480px)
+   ============================================================ */
+@media (max-width: 480px) {
+  /* 📖 تصغير طفيف لنص الشريحة للجوال */
+  .slide-text {
+    font-size: 16px;            /* كان 15px - رفعناه قليلاً للقراءة */
+    line-height: 1.9;
+  }
+
+  /* 📦 تقليل حشوة صندوق النص */
+  .text-box {
+    padding: 18px 16px;
+  }
+
+  /* 🎛️ تصغير أزرار التنقل */
+  .nav-btn {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+
+  /* 📢 تصغير رسالة آخر صفحة */
+  .final-message {
+    font-size: 17px;
+  }
+
+  /* 🏆 تصغير أيقونة ونص الفوز */
+  .win-icon {
+    font-size: 78px;
+  }
+  .win-text {
+    font-size: 26px;
+  }
+
+  /* 🔊 تصغير زر الاستماع */
+  .listen-btn {
+    font-size: 14px;
+    padding: 9px 18px;
+  }
+  .listen-icon {
+    font-size: 16px;
+  }
+}
