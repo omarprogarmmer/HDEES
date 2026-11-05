@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.application'
+}
+
+def webRoot = rootProject.projectDir.parentFile
+def generatedWebAssets = layout.buildDirectory.dir('generated/webAssets')
+
+tasks.register('syncWebAssets', Sync) {
+    from(webRoot) {
+        into 'web'
+        include '*.html'
+        exclude 'تجريب.html'
+        include '*.css'
+        include '*.js'
+        include '*.json'
+        include 'photo/**'
+        include 'sound/**'
+        include 'losson_code/**'
+        include 'test_code/**'
+    }
+    into(generatedWebAssets)
+}
+
+android {
+    namespace 'com.hadeeth.app'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.hadeeth.app'
+        minSdk 23
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    sourceSets {
+        main.assets.srcDir(generatedWebAssets)
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+tasks.named('preBuild').configure {
+    dependsOn tasks.named('syncWebAssets')
+}

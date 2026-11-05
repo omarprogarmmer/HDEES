@@ -1,44 +1,37 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<script src="stting_mc.js"></script>
+<script src="reminders.js"></script>
+<link rel="stylesheet" href="m_c.css">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تمرين السحب والإفلات</title>
+<title>تكوين الكلمات في النص</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
 
 :root {
   --bg-page: #f0e8d8;
-  --text-color: #3d3d3d;
-
   --frame-color: #2e7d32;
   --frame-height: 50px;
-  --frame-text: #ffffff;
-  --exit-text: #cccccc;
-
   --drop-bg: #5cb85c;
   --item-bg: #1b5e20;
-  --item-text: #ffffff;
-
   --cream-color: #f5e6c8;
-
   --label-color: #1b3a1f;
-  --label-weight: 800;
-  --label-size: 18px;
-
-  --divider-color: #000000;
-  --divider-height: 2px;
-
   --reset-bg: #c62828;
-  --reset-text: #ffffff;
+
+  --build-text-color: #1565c0;
+  --answer-text-color: #0d47a1;
+  --answer-bg-color: #e3f2fd;
 }
 
 html, body { height: 100%; }
 body {
   min-height: 100vh;
   background: var(--bg-page);
-  color: var(--text-color);
-  padding-bottom: 120px;
+  color: #3d3d3d;
+  padding-bottom: 90px;
 }
 
 .top-frame {
@@ -49,31 +42,18 @@ body {
   padding: 0 18px; z-index: 999;
   box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }
-.lesson-name { font-size: 16px; font-weight: 700; color: var(--frame-text); }
+.lesson-name { font-size: 16px; font-weight: 700; color: #fff; }
 
 .exit-btn {
-  width: 38px;
-  height: 38px;
-  padding: 0;
-  background: transparent;
-  color: var(--exit-text);
-  border: 2px solid var(--exit-text);
-  border-radius: 50%;
-  font-size: 22px;
-  font-weight: 900;
-  line-height: 1;
-  cursor: pointer;
-  transition: 0.25s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 38px; height: 38px; padding: 0;
+  background: transparent; color: #ccc;
+  border: 2px solid #ccc; border-radius: 50%;
+  font-size: 22px; font-weight: 900; line-height: 1;
+  cursor: pointer; transition: 0.25s;
+  display: flex; align-items: center; justify-content: center;
   font-family: Arial, sans-serif;
 }
-.exit-btn:hover {
-  color: #ffffff;
-  border-color: #ffffff;
-  background: rgba(255,255,255,0.15);
-}
+.exit-btn:hover { color: #fff; border-color: #fff; background: rgba(255,255,255,0.15); }
 
 .bottom-frame {
   position: fixed; bottom: 0; left: 0; right: 0;
@@ -81,300 +61,249 @@ body {
   z-index: 999; box-shadow: 0 -3px 10px rgba(0,0,0,0.15);
 }
 
-.fixed-actions {
-  position: fixed; bottom: var(--frame-height); left: 0; right: 0;
-  background: var(--bg-page); padding: 12px 22px;
-  display: flex; justify-content: center; gap: 14px;
-  z-index: 998; border-top: 1px solid #d0c8b8;
-}
-
-.nav-btn {
-  flex: 1; max-width: 320px; padding: 12px 20px;
-  border: 1.5px solid #c9c2b5; border-radius: 8px;
-  font-size: 15px; font-weight: 600; cursor: pointer;
-  transition: 0.25s; background: #fff; color: #4a4a4a;
-}
-
-.nav-btn.reset {
-  background: var(--reset-bg); color: var(--reset-text);
-  border-color: var(--reset-bg);
-}
-.nav-btn.reset:hover { opacity: 0.9; }
-
-.nav-btn.check {
-  background: var(--item-bg); color: #fff; border-color: var(--item-bg);
-}
-.nav-btn.check:hover { opacity: 0.9; }
-
 .page-wrapper {
   padding: calc(var(--frame-height) + 20px) 20px 20px;
   display: flex; justify-content: center;
 }
-.content-wrapper {
-  width: 100%; max-width: 780px;
-  animation: fadeIn 0.45s ease;
-}
+.content-wrapper { width: 100%; max-width: 820px; animation: fadeIn 0.45s ease; }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.question-row {
-  display: grid;
-  grid-template-columns: 190px 1fr;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 18px;
-  direction: rtl;
+.story-box {
+  background: #fffdf5;
+  border: 2px solid #c9c2b5;
+  border-radius: 14px;
+  padding: 22px 26px;
+  font-size: 20px;
+  line-height: 2.6;
+  color: var(--label-color);
+  font-weight: 600;
+  text-align: right;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.question-label {
-  font-size: var(--label-size);
-  font-weight: var(--label-weight);
-  color: var(--label-color);
-  text-align: right;
-  line-height: 1.3;
-  letter-spacing: 0.3px;
+.slot-wrap {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin: 0 4px;
 }
 
 .drop-slot {
-  background: var(--drop-bg);
-  border-radius: 8px;
-  height: 50px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  min-width: 110px;
+  min-height: 40px;
+  padding: 2px 14px;
+  border-radius: 8px;
+  border: 2px dashed #5cb85c;
+  background: rgba(92,184,92,0.15);
+  color: #2e7d32;
+  font-size: 18px;
+  font-weight: 800;
   transition: 0.25s;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 700;
-  text-align: center;
-  width: 100%;
-  box-sizing: border-box;
-  overflow: hidden;
+  line-height: 1.4;
 }
 
 .drop-slot.filled {
-  background: var(--cream-color);
+  background: var(--answer-bg-color);
+  border: 2px solid var(--answer-text-color);
+  color: var(--answer-text-color);
+  min-width: 120px;
+}
+.drop-slot.correct {
+  border-color: var(--answer-text-color);
+  box-shadow: 0 0 0 3px rgba(13,71,161,0.2);
 }
 
-.drop-slot.drag-over {
-  background: #4cae4c;
-  transform: scale(1.02);
-}
-
-.divider {
-  height: var(--divider-height);
-  background: var(--divider-color);
-  margin: 24px 0;
-  width: 100%;
-}
-
-.items-pool {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  padding: 10px;
-  min-height: 100px;
-  border-radius: 12px;
-}
-
-.item-slot {
-  height: 46px;
-  border-radius: 8px;
-  box-sizing: border-box;
-  background: transparent;
+.build-row {
+  margin: 22px 0 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.drag-item {
-  background: var(--item-bg);
-  color: var(--item-text);
-  height: 46px;
-  width: 100%;
-  padding: 0 20px;
-  border-radius: 8px;
+.build-label {
   font-size: 15px;
   font-weight: 700;
-  cursor: grab;
+  color: var(--label-color);
+  margin-left: 4px;
+}
+
+.build-box {
+  min-width: 220px;
+  min-height: 56px;
+  padding: 6px 14px;
+  border-radius: 12px;
+  border: 3px solid #2e7d32;
+  background: #fffdf5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--build-text-color);
+  transition: 0.25s;
+  letter-spacing: 0;
+  direction: rtl;
+}
+.build-box .letter-text {
+  display: inline-block;
+  direction: rtl;
+  unicode-bidi: isolate;
+  color: var(--build-text-color);
+}
+.build-box.ok {
+  border-color: #2e7d32;
+  background: #e8f5e9;
+  animation: popOk 0.5s ease;
+}
+@keyframes popOk {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.build-clear {
+  width: 40px;
+  height: 56px;
+  border: none;
+  background: var(--reset-bg);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+.build-clear:hover { background: #a01818; transform: scale(1.06); }
+.build-clear:active { transform: scale(0.96); }
+.build-clear:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+.divider {
+  height: 2px; background: #000; margin: 20px 0; width: 100%;
+}
+
+.letters-pool {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  min-height: 90px;
+  border-radius: 12px;
+  border: 1.5px dashed #b0b0b0;
+  background: rgba(255,255,255,0.4);
+}
+
+.letter {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  background: var(--item-bg);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   user-select: none;
   transition: 0.2s;
   box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-  touch-action: none;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
-
-.drag-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 12px rgba(0,0,0,0.22);
-}
-
-.drag-item:active {
-  cursor: grabbing;
-  transform: scale(1.04);
-}
-
-.drag-item.dragging { opacity: 0.5; }
-
-.item-slot.taken .drag-item {
-  opacity: 0.35;
-  pointer-events: none;
-  filter: grayscale(60%);
-}
-
-.drop-slot .drag-item {
-  height: 100%;
-  width: 100%;
-  padding: 0 8px;
-  border-radius: 6px;
-  font-size: 14px;
-  margin: 0;
-  box-shadow: none;
-  cursor: grab;
-}
-
-.drop-slot .drag-item:hover {
-  transform: none;
-  box-shadow: none;
-  opacity: 0.9;
-}
+.letter:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 6px 14px rgba(0,0,0,0.25); }
+.letter:active { transform: scale(0.95); }
+.letter.used { opacity: 0.3; pointer-events: none; filter: grayscale(80%); }
 
 .result-msg {
   text-align: center;
   font-size: 16px;
   font-weight: 700;
-  margin-top: 20px;
-  height: 24px;
+  margin-top: 16px;
+  min-height: 24px;
   color: var(--item-bg);
 }
 .result-msg.error { color: #c62828; }
 
 /* ============================================================
-   🎉 تأثير الفوز (Win Overlay)
+   🎉 تأثير الفوز — قصاصات ورق من الأطراف السفلية
    ============================================================ */
-
 .win-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(20, 40, 20, 0.55);
+  position: fixed; inset: 0;
+  background: rgba(20,40,20,0.55);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   flex-direction: column;
   z-index: 9999;
-  opacity: 0;
-  pointer-events: none;
+  opacity: 0; pointer-events: none;
   transition: opacity 0.35s ease;
+  overflow: hidden;
 }
+.win-overlay.show { opacity: 1; pointer-events: auto; }
 
-.win-overlay.show {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.win-icon {
-  font-size: 100px;
-  line-height: 1;
-  color: #ffd54f;
-  text-shadow:
-    0 0 20px rgba(255, 213, 79, 0.8),
-    0 0 40px rgba(255, 213, 79, 0.5);
-  transform: scale(0) rotate(-180deg);
-  animation: winPop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes winPop {
-  0%   { transform: scale(0) rotate(-180deg); }
-  60%  { transform: scale(1.25) rotate(10deg); }
-  100% { transform: scale(1) rotate(0deg); }
-}
-
+/* نص أحسنت فقط — بدون كأس */
 .win-text {
-  margin-top: 24px;
-  font-size: 34px;
+  font-size: 56px;
   font-weight: 900;
-  color: #ffffff;
-  letter-spacing: 1px;
-  text-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow:
+    0 0 20px rgba(255,213,79,0.9),
+    0 4px 24px rgba(0,0,0,0.6);
   opacity: 0;
-  transform: translateY(20px);
-  animation: winTextIn 0.6s ease 0.35s forwards;
+  transform: scale(0.4) translateY(30px);
+  animation: winTextIn 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.2s forwards;
+  z-index: 2;
 }
-
 @keyframes winTextIn {
-  to { opacity: 1; transform: translateY(0); }
+  0%   { opacity: 0; transform: scale(0.4) translateY(30px); }
+  60%  { opacity: 1; transform: scale(1.15) translateY(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.win-rings {
+/* 📄 قصاصات الورق — تخرج من الأطراف السفلية */
+.paper-piece {
   position: absolute;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  border: 3px solid rgba(255, 213, 79, 0.6);
-  animation: ringExpand 1.4s ease-out infinite;
+  bottom: -30px;
   pointer-events: none;
-}
-.win-rings.delay { animation-delay: 0.4s; }
-
-@keyframes ringExpand {
-  0%   { transform: scale(0.6); opacity: 1; }
-  100% { transform: scale(2.5); opacity: 0; }
-}
-
-.confetti {
-  position: absolute;
-  width: 10px;
-  height: 16px;
-  top: -20px;
   opacity: 0.95;
-  animation: confettiFall linear forwards;
-  pointer-events: none;
+  border-radius: 2px;
+  animation: paperFly linear forwards;
+  z-index: 1;
 }
 
-@keyframes confettiFall {
+@keyframes paperFly {
   0% {
-    transform: translateY(-20px) rotate(0deg);
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
     opacity: 1;
   }
   100% {
-    transform: translateY(110vh) rotate(720deg);
-    opacity: 0.4;
+    transform: translateY(-110vh) translateX(var(--drift, 0px)) rotate(var(--rot, 720deg)) scale(0.7);
+    opacity: 0.2;
   }
 }
 
 @media (max-width: 480px) {
-  .question-row { grid-template-columns: 130px 1fr; gap: 10px; margin-bottom: 14px; }
-  .question-label { font-size: 15px; }
-  .drop-slot      { height: 44px; font-size: 13px; }
-  .item-slot      { height: 42px; }
-  .drag-item      { height: 42px; padding: 0 14px; font-size: 13px; }
-  .drop-slot .drag-item { font-size: 12px; padding: 0 6px; }
-  .items-pool { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
-  .win-icon { font-size: 78px; }
-  .win-text { font-size: 26px; }
-}
-
-@media (max-width: 360px) {
-  .question-row   { grid-template-columns: 110px 1fr; gap: 8px; }
-  .question-label { font-size: 14px; }
-  .drop-slot      { height: 40px; font-size: 12px; }
-  .item-slot      { height: 38px; }
-  .drag-item      { height: 38px; font-size: 12px; padding: 0 10px; }
-  .drop-slot .drag-item { font-size: 11px; }
-  .items-pool { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); }
+  .story-box { font-size: 16px; padding: 16px 18px; line-height: 2.3; }
+  .drop-slot { min-width: 80px; min-height: 34px; font-size: 14px; padding: 2px 10px; }
+  .drop-slot.filled { min-width: 90px; }
+  .letter { width: 42px; height: 42px; font-size: 20px; }
+  .build-box { min-width: 160px; min-height: 48px; font-size: 20px; }
+  .build-clear { width: 34px; height: 48px; font-size: 15px; }
+  .win-text { font-size: 40px; }
 }
 </style>
 </head>
@@ -387,38 +316,37 @@ body {
 
 <div class="page-wrapper">
   <div class="content-wrapper">
-    <div id="dropZone"></div>
+
+    <div class="story-box" id="storyBox"></div>
+
+    <div class="build-row">
+      <span class="build-label">✏️ كوّن الكلمة:</span>
+      <div class="build-box" id="buildBox">
+        <span style="opacity:0.4;font-size:14px;font-weight:600;">اضغط على الحروف...</span>
+      </div>
+      <button class="build-clear" id="buildClear" title="مسح الحروف" disabled>✕</button>
+    </div>
+
     <div class="divider"></div>
-    <div class="items-pool" id="itemsPool"></div>
+
+    <div class="letters-pool" id="lettersPool"></div>
+
     <div class="result-msg" id="resultMsg"></div>
   </div>
 </div>
 
-<div class="fixed-actions">
-  <button class="nav-btn reset" id="resetBtn">🔄 إعادة</button>
-  <button class="nav-btn check" id="checkBtn">✅ تحقق</button>
-</div>
-
 <div class="bottom-frame"></div>
 
-<!-- 🎉 طبقة الفوز -->
+<!-- 🎉 طبقة الفوز — فقط نص أحسنت -->
 <div class="win-overlay" id="winOverlay">
-  <div class="win-rings"></div>
-  <div class="win-rings delay"></div>
-  <div class="win-icon">🏆</div>
   <div class="win-text">أحسنت!</div>
 </div>
 
-<!-- 🔊 صوت الأزرار -->
-<audio id="clickSound" src="sonud/buttem.mp3" preload="auto"></audio>
+<audio id="clickSound" src="sound/buttem.mp3" preload="auto"></audio>
 
 <script>
-/* ============================================================
-   ⚙️ الإعدادات
-   ============================================================ */
-
 const CONFIG = {
-  id: "فضل الصيام_التدريب الأول ",
+  id: "فضل الصيام_التدريب الأول",
   stageNumber: 3,
 
   exitUrl: "stages.html",
@@ -427,499 +355,288 @@ const CONFIG = {
   exercisesStagesKey: "exercises_stages_count",
   solvedListKey:      "solved_exercises_list",
 
-  items: [
-    { id: "item_1", text: "في الجنة ثمانيةأبواب",  label: "عني النبيﷺ :" },
-    { id: "item_2", text: "يسمى الريان ",          label: "فيها " },
-    { id: "item_3", text: "إلا الصائمون",          label: "لايدخله" },
+  storyText: "قال النبي ﷺ: في الجنة ثمانية أبواب، يسمى أحدها {0} لا يدخله إلا {1}، ومن فضل الصيام أنه {2} .",
+
+  slots: [
+    { id: "slot_1", word: "الريان" },
+    { id: "slot_2", word: "الصائمون" },
+    { id: "slot_3", word: "الغفران" },
   ],
 
-  successMessage: "✅ أحسنت! كل الإجابات صحيحة",
-  emptyMessage:   "⚠️ املأ كل المربعات أولاً",
-  retryMessage:   "❌ حاول مرة أخرى",
+  extraLetters: ["ب", "ت", "ن"],
 
-  resetConfirmMessage: "",
+  successMessage: "✅ أحسنت! كل الإجابات صحيحة",
+  wordCorrect:    "🎉 كلمة صحيحة! انتقلت إلى مكانها",
 
   successRedirectUrl: "stages.html",
-  successRedirectDelay: 2000,
-
-  winText: "أحسنت!",
-  winDuration: 2000,
+  successRedirectDelay: 2200,
 };
 
-/* ============================================================
-   🧠 منطق التطبيق — سحب وإفلات، تحقق، فوز
-   ============================================================ */
-
 (function() {
-  const dropZone   = document.getElementById('dropZone');
-  const itemsPool  = document.getElementById('itemsPool');
-  const resultMsg  = document.getElementById('resultMsg');
-  const resetBtn   = document.getElementById('resetBtn');
-  const checkBtn   = document.getElementById('checkBtn');
-  const exitBtn    = document.getElementById('exitBtn');
-  const lessonName = document.getElementById('lessonName');
-  const winOverlay = document.getElementById('winOverlay');
-  const clickSound = document.getElementById('clickSound');
+  const storyBox    = document.getElementById('storyBox');
+  const lettersPool = document.getElementById('lettersPool');
+  const buildBox    = document.getElementById('buildBox');
+  const buildClear  = document.getElementById('buildClear');
+  const resultMsg   = document.getElementById('resultMsg');
+  const exitBtn     = document.getElementById('exitBtn');
+  const lessonName  = document.getElementById('lessonName');
+  const winOverlay  = document.getElementById('winOverlay');
+  const clickSound  = document.getElementById('clickSound');
 
   if (lessonName) lessonName.textContent = CONFIG.id;
 
-  let draggedItem = null;
-  let dragSourceSlot = null;
+  let poolLetters  = [];
+  let buildLetters = [];
+  let solvedSlots  = new Set();
+  let charMap      = {};
 
-  /* ---------- بناء الواجهة ---------- */
-  function render() {
-    dropZone.innerHTML = '';
-    itemsPool.innerHTML = '';
-
-    const shuffled = [...CONFIG.items].sort(() => Math.random() - 0.5);
-
-    CONFIG.items.forEach((item, index) => {
-      const row = document.createElement('div');
-      row.className = 'question-row';
-
-      const label = document.createElement('div');
-      label.className = 'question-label';
-      label.textContent = item.label;
-
-      const slot = document.createElement('div');
-      slot.className = 'drop-slot';
-      slot.dataset.correctId = item.id;
-      slot.dataset.slotIndex = index;
-
-      slot.addEventListener('dragover',  handleDragOver);
-      slot.addEventListener('dragleave', handleDragLeave);
-      slot.addEventListener('drop',      handleDrop);
-
-      slot.addEventListener('touchstart', handleTouchStart, { passive: false });
-      slot.addEventListener('touchmove',  handleTouchMove,  { passive: false });
-      slot.addEventListener('touchend',   handleTouchEnd);
-
-      row.appendChild(label);
-      row.appendChild(slot);
-      dropZone.appendChild(row);
+  function renderStory() {
+    storyBox.innerHTML = '';
+    let html = CONFIG.storyText;
+    CONFIG.slots.forEach((slot, i) => {
+      const placeholder = `{${i}}`;
+      const slotHTML =
+        `<span class="slot-wrap" data-wrap-id="${slot.id}">` +
+          `<span class="drop-slot" data-slot-id="${slot.id}" data-word="${slot.word}" data-index="${i}"></span>` +
+        `</span>`;
+      html = html.replace(placeholder, slotHTML);
     });
-
-    shuffled.forEach(item => {
-      const slot = document.createElement('div');
-      slot.className = 'item-slot';
-      slot.dataset.itemId = item.id;
-
-      const dragEl = document.createElement('div');
-      dragEl.className = 'drag-item';
-      dragEl.textContent = item.text;
-      dragEl.draggable = true;
-      dragEl.dataset.itemId = item.id;
-
-      dragEl.addEventListener('dragstart', handleDragStart);
-      dragEl.addEventListener('dragend',   handleDragEnd);
-
-      dragEl.addEventListener('touchstart', handleTouchStart, { passive: false });
-      dragEl.addEventListener('touchmove',  handleTouchMove,  { passive: false });
-      dragEl.addEventListener('touchend',   handleTouchEnd);
-
-      slot.appendChild(dragEl);
-      itemsPool.appendChild(slot);
-    });
-
-    resultMsg.textContent = '';
-    resultMsg.classList.remove('error');
-    winOverlay.classList.remove('show');
-  }
-
-  /* ---------- ✅ تحديث حالة الفراغات والمخزون ---------- */
-  function updateSlotsState() {
-    // 1) تحديث الفراغات (drop-slot): filled إذا كان يحتوي عنصراً
-    document.querySelectorAll('.drop-slot').forEach(slot => {
-      if (slot.querySelector('.drag-item')) {
-        slot.classList.add('filled');
-      } else {
-        slot.classList.remove('filled');
-      }
-    });
-
-    // 2) تحديث المخزون (item-slot): taken إذا كان فارغاً (العنصر خرج منه)
-    document.querySelectorAll('.item-slot').forEach(slot => {
-      if (slot.querySelector('.drag-item')) {
-        slot.classList.remove('taken');
-      } else {
-        slot.classList.add('taken');
+    storyBox.innerHTML = html;
+    solvedSlots.forEach(slotId => {
+      const slotConfig = CONFIG.slots.find(s => s.id === slotId);
+      const slotEl = storyBox.querySelector(`.drop-slot[data-slot-id="${slotId}"]`);
+      if (slotEl && slotConfig) {
+        slotEl.textContent = slotConfig.word;
+        slotEl.classList.add('filled', 'correct');
       }
     });
   }
 
-  /* ---------- HTML5 Drag & Drop ---------- */
-  function handleDragStart(e) {
-    const dragEl = e.target.closest('.drag-item');
-    if (!dragEl) return;
-
-    draggedItem = dragEl;
-    dragSourceSlot = dragEl.parentElement;
-
-    e.dataTransfer.setData('text/plain', dragEl.dataset.itemId);
-    e.dataTransfer.effectAllowed = 'move';
-
-    setTimeout(() => dragEl.classList.add('dragging'), 0);
-  }
-
-  function handleDragEnd(e) {
-    const dragEl = e.target.closest('.drag-item');
-    if (dragEl) dragEl.classList.remove('dragging');
-
-    // ✅ الرجوع للمكان الأصلي إذا أُفلت خارج أي فراغ
-    if (dragEl && !dragEl.dataset.dropped) {
-      const itemId = dragEl.dataset.itemId;
-      const originalSlot = document.querySelector(`.item-slot[data-item-id="${itemId}"]`);
-      if (originalSlot) {
-        originalSlot.appendChild(dragEl);
-      }
-    }
-
-    if (dragEl) delete dragEl.dataset.dropped;
-
-    draggedItem = null;
-    dragSourceSlot = null;
-
-    document.querySelectorAll('.drop-slot.drag-over')
-      .forEach(el => el.classList.remove('drag-over'));
-
-    // ✅ تحديث حالة جميع الفراغات
-    updateSlotsState();
-  }
-
-  function handleDragOver(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    const slot = e.target.closest('.drop-slot');
-    if (slot) slot.classList.add('drag-over');
-  }
-
-  function handleDragLeave(e) {
-    const slot = e.target.closest('.drop-slot');
-    if (slot) slot.classList.remove('drag-over');
-  }
-
-  function handleDrop(e) {
-    e.preventDefault();
-    const slot = e.target.closest('.drop-slot');
-    if (!slot) return;
-
-    slot.classList.remove('drag-over');
-
-    const itemId = e.dataTransfer.getData('text/plain');
-    if (!itemId) return;
-
-    const dragEl = document.querySelector(`.drag-item[data-item-id="${itemId}"]`);
-    if (!dragEl) return;
-
-    placeItemInSlot(dragEl, slot);
-  }
-
-  /* ---------- Touch (للموبايل) ---------- */
-  let touchDraggedItem = null;
-  let touchOffsetX = 0, touchOffsetY = 0;
-  let touchClone = null;
-
-  function handleTouchStart(e) {
-    const dragEl = e.target.closest('.drag-item');
-    if (!dragEl) return;
-
-    e.preventDefault();
-
-    touchDraggedItem = dragEl;
-    const rect = dragEl.getBoundingClientRect();
-
-    touchOffsetX = e.touches[0].clientX - rect.left;
-    touchOffsetY = e.touches[0].clientY - rect.top;
-
-    touchClone = dragEl.cloneNode(true);
-    Object.assign(touchClone.style, {
-      position: 'fixed',
-      left: rect.left + 'px',
-      top: rect.top + 'px',
-      width: rect.width + 'px',
-      height: rect.height + 'px',
-      zIndex: '10000',
-      pointerEvents: 'none',
-      opacity: '0.8',
-      transform: 'scale(1.05)'
+  function renderLetters() {
+    lettersPool.innerHTML = '';
+    poolLetters = [];
+    charMap = {};
+    let uid = 0;
+    CONFIG.slots.forEach(slot => {
+      [...slot.word].forEach(ch => {
+        const id = 'L' + (uid++);
+        poolLetters.push({ id, ch });
+        charMap[id] = ch;
+      });
     });
-    document.body.appendChild(touchClone);
-
-    dragEl.style.opacity = '0.3';
-  }
-
-  function handleTouchMove(e) {
-    if (!touchDraggedItem || !touchClone) return;
-    e.preventDefault();
-
-    const touch = e.touches[0];
-    touchClone.style.left = (touch.clientX - touchOffsetX) + 'px';
-    touchClone.style.top  = (touch.clientY - touchOffsetY) + 'px';
-
-    document.querySelectorAll('.drop-slot.drag-over')
-      .forEach(el => el.classList.remove('drag-over'));
-
-    const elUnder = document.elementFromPoint(touch.clientX, touch.clientY);
-    const slot = elUnder?.closest('.drop-slot');
-    if (slot) slot.classList.add('drag-over');
-  }
-
-  function handleTouchEnd(e) {
-    if (!touchDraggedItem) return;
-
-    if (touchClone) { touchClone.remove(); touchClone = null; }
-    touchDraggedItem.style.opacity = '';
-
-    document.querySelectorAll('.drop-slot.drag-over')
-      .forEach(el => el.classList.remove('drag-over'));
-
-    const touch = e.changedTouches[0];
-    const elUnder = document.elementFromPoint(touch.clientX, touch.clientY);
-    const slot = elUnder?.closest('.drop-slot');
-
-    if (slot) {
-      placeItemInSlot(touchDraggedItem, slot);
-    } else {
-      // ✅ الرجوع للمكان الأصلي
-      const itemId = touchDraggedItem.dataset.itemId;
-      const originalSlot = document.querySelector(`.item-slot[data-item-id="${itemId}"]`);
-      if (originalSlot) {
-        originalSlot.appendChild(touchDraggedItem);
-      }
-      updateSlotsState();
-    }
-
-    touchDraggedItem = null;
-  }
-
-  /* ---------- وضع العنصر في الخانة (مع التبديل) ---------- */
-  function placeItemInSlot(dragEl, slot) {
-    // ✅ ميزة التبديل: إذا كان الفراغ ممتلئاً، بدّل العنصرين
-    const existing = slot.querySelector('.drag-item');
-    if (existing && existing !== dragEl) {
-      const currentParent = dragEl.parentElement;
-
-      if (currentParent && currentParent.classList.contains('drop-slot')) {
-        // تبديل بين فراغين (Swap)
-        currentParent.appendChild(existing);
-      } else {
-        // العنصر قادم من المخزون → أعد الموجود لمكانه الأصلي في المخزون
-        const existingId = existing.dataset.itemId;
-        const originalSlot = document.querySelector(`.item-slot[data-item-id="${existingId}"]`);
-        if (originalSlot) {
-          originalSlot.appendChild(existing);
-        }
-      }
-    }
-
-    slot.appendChild(dragEl);
-    dragEl.dataset.dropped = 'true'; // ✅ علامة نجاح الإسقاط
-
-    draggedItem = null;
-    dragSourceSlot = null;
-
-    // ✅ تحديث حالة جميع الفراغات والمخزون
-    updateSlotsState();
-  }
-
-  /* ---------- إعادة تعيين ---------- */
-  function resetExercise() {
-    document.querySelectorAll('.drop-slot .drag-item').forEach(dragEl => {
-      const itemId = dragEl.dataset.itemId;
-      const originalSlot = document.querySelector(`.item-slot[data-item-id="${itemId}"]`);
-      if (originalSlot) {
-        originalSlot.appendChild(dragEl);
-      }
+    CONFIG.extraLetters.forEach(ch => {
+      const id = 'L' + (uid++);
+      poolLetters.push({ id, ch });
+      charMap[id] = ch;
     });
-
-    document.querySelectorAll('.drop-slot').forEach(s => s.classList.remove('drag-over'));
-    updateSlotsState();
-
-    resultMsg.textContent = '';
-    resultMsg.classList.remove('error');
-    winOverlay.classList.remove('show');
+    poolLetters.sort(() => Math.random() - 0.5);
+    poolLetters.forEach(l => {
+      const el = document.createElement('div');
+      el.className = 'letter';
+      el.textContent = l.ch;
+      el.dataset.letterId = l.id;
+      lettersPool.appendChild(el);
+    });
   }
 
-  /* ---------- التحقق ---------- */
-  function checkAnswers() {
-    const slots = document.querySelectorAll('.drop-slot');
-    let allFilled = true;
-    let allCorrect = true;
-
-    slots.forEach(slot => {
-      const dragEl = slot.querySelector('.drag-item');
-      if (!dragEl) { allFilled = false; allCorrect = false; return; }
-      if (dragEl.dataset.itemId !== slot.dataset.correctId) allCorrect = false;
-    });
-
-    if (!allFilled) {
-      resultMsg.textContent = CONFIG.emptyMessage;
-      resultMsg.classList.add('error');
+  function updateBuildBox() {
+    buildBox.innerHTML = '';
+    buildBox.classList.remove('ok');
+    if (buildLetters.length === 0) {
+      const hint = document.createElement('span');
+      hint.style.opacity = '0.4';
+      hint.style.fontSize = '14px';
+      hint.style.fontWeight = '600';
+      hint.textContent = 'اضغط على الحروف...';
+      buildBox.appendChild(hint);
+      buildClear.disabled = true;
       return;
     }
+    const word = buildLetters.map(l => l.ch).join('');
+    const span = document.createElement('span');
+    span.className = 'letter-text';
+    span.textContent = word;
+    buildBox.appendChild(span);
+    buildClear.disabled = false;
+  }
 
-    if (allCorrect) {
-      resultMsg.textContent = CONFIG.successMessage;
+  function getBuildWord() {
+    return buildLetters.map(l => l.ch).join('');
+  }
+
+  function tryMatchWord() {
+    const word = getBuildWord();
+    if (!word) return;
+
+    const matchedSlot = CONFIG.slots.find(s =>
+      !solvedSlots.has(s.id) && s.word === word
+    );
+
+    if (matchedSlot) {
+      const slotEl = storyBox.querySelector(`.drop-slot[data-slot-id="${matchedSlot.id}"]`);
+      if (slotEl) {
+        slotEl.textContent = word;
+        slotEl.classList.add('filled', 'correct');
+      }
+      solvedSlots.add(matchedSlot.id);
+
+      buildLetters = [];
+      updateBuildBox();
+
+      resultMsg.textContent = CONFIG.wordCorrect;
       resultMsg.classList.remove('error');
-      saveProgress();
-      showWinOverlay();
+      setTimeout(() => { resultMsg.textContent = ''; }, 1500);
 
-      setTimeout(() => {
-        if (CONFIG.successRedirectUrl) window.location.href = CONFIG.successRedirectUrl;
-      }, CONFIG.successRedirectDelay);
-    } else {
-      resultMsg.textContent = CONFIG.retryMessage;
-      resultMsg.classList.add('error');
+      playSound();
+
+      if (solvedSlots.size === CONFIG.slots.length) {
+        setTimeout(() => {
+          resultMsg.textContent = CONFIG.successMessage;
+          saveProgress();
+          showWinOverlay();
+          setTimeout(() => {
+            if (CONFIG.successRedirectUrl) {
+              window.location.href = CONFIG.successRedirectUrl;
+            }
+          }, CONFIG.successRedirectDelay);
+        }, 400);
+      }
     }
   }
 
-  /* ---------- حفظ التقدم ---------- */
+  function clearBuildBox() {
+    if (buildLetters.length === 0) return;
+    buildLetters.forEach(l => {
+      if (!poolLetters.find(p => p.id === l.id)) poolLetters.push(l);
+      const el = lettersPool.querySelector(`.letter[data-letter-id="${l.id}"]`);
+      if (el) el.classList.remove('used');
+    });
+    buildLetters = [];
+    updateBuildBox();
+    playSound();
+  }
+
+  function handleClick(e) {
+    const letterEl = e.target.closest('.letter');
+    if (!letterEl) return;
+    const inPool = letterEl.parentElement === lettersPool;
+    if (!inPool) return;
+    const id = letterEl.dataset.letterId;
+    const idx = poolLetters.findIndex(l => l.id === id);
+    if (idx === -1) return;
+    const letter = poolLetters.splice(idx, 1)[0];
+    buildLetters.push(letter);
+    updateBuildBox();
+    letterEl.classList.add('used');
+    playSound();
+    tryMatchWord();
+  }
+
   function saveProgress() {
     try {
       let count = parseInt(localStorage.getItem(CONFIG.exercisesStagesKey) || '0');
       count += 1;
       localStorage.setItem(CONFIG.exercisesStagesKey, count);
-
       let solved = JSON.parse(localStorage.getItem(CONFIG.solvedListKey) || '[]');
       if (!solved.includes(CONFIG.id)) {
         solved.push(CONFIG.id);
         localStorage.setItem(CONFIG.solvedListKey, JSON.stringify(solved));
       }
-    } catch (e) {
-      console.warn('⚠️ لا يمكن حفظ التقدم:', e);
-    }
+    } catch(e) { console.warn(e); }
   }
 
-  /* ---------- تأثير الفوز ---------- */
+  /* ============================================================
+     🎉 عرض طبقة الفوز + قصاصات ورق من الأطراف السفلية
+     ============================================================ */
   function showWinOverlay() {
     winOverlay.classList.add('show');
-    document.querySelectorAll('.confetti').forEach(el => el.remove());
 
-    const colors = ['#ffd54f', '#ff8a65', '#4fc3f7', '#aed581', '#f06292', '#ba68c8'];
-    for (let i = 0; i < 40; i++) {
-      const c = document.createElement('div');
-      c.className = 'confetti';
-      c.style.left = Math.random() * 100 + '%';
-      c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      c.style.animationDuration = (Math.random() * 2 + 2) + 's';
-      c.style.animationDelay = (Math.random() * 1.5) + 's';
-      c.style.width  = (Math.random() * 8 + 6) + 'px';
-      c.style.height = (Math.random() * 12 + 8) + 'px';
-      winOverlay.appendChild(c);
-      setTimeout(() => c.remove(), 5000);
+    // احذف أي قصاصات قديمة
+    winOverlay.querySelectorAll('.paper-piece').forEach(el => el.remove());
+
+    const colors = [
+      '#ffd54f', '#ff8a65', '#4fc3f7', '#aed581',
+      '#f06292', '#ba68c8', '#fff176', '#4db6ac',
+      '#ffb74d', '#e57373', '#81c784', '#7986cb'
+    ];
+
+    const totalPieces = 80; // عدد القصاصات الكلي
+
+    for (let i = 0; i < totalPieces; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'paper-piece';
+
+      // يخرج من الأطراف السفلية: يمين أو يسار
+      const fromRight = Math.random() > 0.5;
+      if (fromRight) {
+        piece.style.right = (Math.random() * 15) + '%'; // يمين الصفحة
+        piece.style.left = 'auto';
+      } else {
+        piece.style.left = (Math.random() * 15) + '%';  // يسار الصفحة
+        piece.style.right = 'auto';
+      }
+
+      // حجم عشوائي
+      const w = Math.random() * 8 + 6;   // 6–14px
+      const h = Math.random() * 12 + 8;  // 8–20px
+      piece.style.width = w + 'px';
+      piece.style.height = h + 'px';
+
+      // لون عشوائي
+      piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+      // شكل: بعضها مستطيل وبعضها مثلث/دائري
+      const shape = Math.random();
+      if (shape < 0.25) {
+        piece.style.borderRadius = '50%';
+      } else if (shape < 0.45) {
+        piece.style.clipPath = 'polygon(50% 0%, 100% 100%, 0% 100%)'; // مثلث
+      } else {
+        piece.style.borderRadius = '2px';
+      }
+
+      // مدة الطيران (2.5 – 4.5 ثانية)
+      const duration = 2.5 + Math.random() * 2;
+      piece.style.animationDuration = duration + 's';
+
+      // تأخير بسيط (0 – 0.8 ثانية)
+      piece.style.animationDelay = (Math.random() * 0.8) + 's';
+
+      // انحراف أفقي أثناء الطيران (نحو المركز أو بعيداً)
+      const drift = (Math.random() - 0.5) * 260; // -130 إلى +130
+      piece.style.setProperty('--drift', drift + 'px');
+
+      // دوران عشوائي
+      const rot = (Math.random() > 0.5 ? 1 : -1) * (360 + Math.random() * 720);
+      piece.style.setProperty('--rot', rot + 'deg');
+
+      winOverlay.appendChild(piece);
+
+      // أزل القصاصة بعد انتهائها
+      setTimeout(() => piece.remove(), (duration + 1) * 1000);
     }
   }
 
-  /* ---------- الأحداث ---------- */
-  resetBtn.addEventListener('click', resetExercise);
-  checkBtn.addEventListener('click', checkAnswers);
+  function playSound() {
+    if (clickSound) {
+      clickSound.currentTime = 0;
+      clickSound.play().catch(() => {});
+    }
+  }
 
+  buildClear.addEventListener('click', clearBuildBox);
   exitBtn.addEventListener('click', () => {
     if (confirm(CONFIG.exitConfirmMessage)) {
       window.location.href = CONFIG.exitUrl;
     }
   });
 
-  document.addEventListener('dragstart', (e) => {
-    if (!e.target.closest('.drag-item')) e.preventDefault();
-  });
+  document.querySelector('.page-wrapper').addEventListener('click', handleClick);
 
-  /* 🔊 صوت لكل الأزرار */
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('button');
-    if (!btn || btn.disabled) return;
-    if (clickSound) {
-      clickSound.currentTime = 0;
-      clickSound.play().catch(() => {});
-    }
-  }, true);
-
-  /* ---------- تشغيل ---------- */
-  render();
+  renderStory();
+  renderLetters();
+  updateBuildBox();
 })();
-</script>
-
-<!-- ============================================================
-     🛠️ Service Worker (my-app-v6) — مسجَّل داخلياً
-     ============================================================ -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    const swCode = `
-const CACHE_NAME = 'my-app-v6';
-
-const PRECACHE_ASSETS = [
-  './',
-  './index.html',
-  './style_test.css',
-  './script_test.js',
-  './sonud/buttem.mp3',
-  './stages.html'
-];
-
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return Promise.allSettled(
-        PRECACHE_ASSETS.map(url =>
-          cache.add(url).catch(err => console.warn('⚠️ فشل تحميل:', url))
-        )
-      );
-    }).then(() => self.skipWaiting())
-  );
-});
-
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-      )
-    ).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  if (!event.request.url.startsWith('http')) return;
-
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-
-      return fetch(event.request).then(response => {
-        if (!response || response.status !== 200 || response.type === 'opaque') {
-          return response;
-        }
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        return response;
-      }).catch(() => {
-        const accept = event.request.headers.get('accept') || '';
-        if (accept.includes('text/html')) {
-          return caches.match(event.request).then(c => c || caches.match('./index.html'));
-        }
-        return new Response('', { status: 408, statusText: 'Offline' });
-      });
-    })
-  );
-});
-
-self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'KEEP_ALIVE') {
-    console.log('💚 Service Worker نشط');
-  }
-});
-    `;
-
-    const blob = new Blob([swCode], { type: 'application/javascript' });
-    const swUrl = URL.createObjectURL(blob);
-
-    navigator.serviceWorker.register(swUrl)
-      .then(reg => console.log('✅ Service Worker مسجل:', reg.scope))
-      .catch(err => console.warn('⚠️ فشل تسجيل Service Worker:', err));
-  });
-}
 </script>
 
 </body>

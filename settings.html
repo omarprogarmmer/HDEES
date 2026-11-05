@@ -4,28 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>الإعدادات</title>
+<script src="stting_mc.js"></script>
+<script src="reminders.js"></script>
+<link rel="stylesheet" href="m_c.css">
+
+<script>
+try {
+  if (localStorage.getItem('app_theme') === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+} catch (error) {
+  console.warn('تعذر تحميل المظهر المحفوظ:', error);
+}
+</script>
 
 <style>
-/* ============================================================
-   🎨 أنماط صفحة الإعدادات (مستقلة تماماً)
-   ============================================================ */
-
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
 
 :root {
   --bg-page: #f0e8d8;
   --text-color: #3d3d3d;
-
   --frame-color: #2e7d32;
   --frame-height: 50px;
   --frame-text: #ffffff;
   --exit-text: #cccccc;
-
   --item-bg: #1b5e20;
   --label-color: #1b3a1f;
-
   --reset-bg: #c62828;
-
   --card-bg: #ffffff;
   --card-border: #e0d8c8;
   --card-shadow: rgba(0,0,0,0.06);
@@ -34,14 +39,29 @@
   --btn-cancel-text: #4a4a4a;
 }
 
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-page: #121a16;
+  --text-color: #edf4ef;
+  --frame-color: #205536;
+  --label-color: #e5f1e8;
+  --reset-bg: #c62828;
+  --card-bg: #202b24;
+  --card-border: #394b3f;
+  --card-shadow: rgba(0,0,0,0.4);
+  --desc-color: #b7c5bb;
+  --btn-cancel-bg: #35463a;
+  --btn-cancel-text: #ffffff;
+}
+
 html, body { height: 100%; }
 body {
   min-height: 100vh;
   background: var(--bg-page);
   color: var(--text-color);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* 🟢 الشريط العلوي */
 .top-frame {
   position: fixed; top: 0; left: 0; right: 0;
   height: var(--frame-height);
@@ -72,7 +92,6 @@ body {
   z-index: 999; box-shadow: 0 -3px 10px rgba(0,0,0,0.15);
 }
 
-/* 📄 محتوى الصفحة */
 .page-wrapper {
   padding: calc(var(--frame-height) + 24px) 20px calc(var(--frame-height) + 30px);
   display: flex; justify-content: center;
@@ -86,7 +105,6 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ⚙️ بطاقة إعداد */
 .setting-card {
   background: var(--card-bg);
   border: 1.5px solid var(--card-border);
@@ -110,33 +128,221 @@ body {
   line-height: 1.5;
 }
 
-/* 🔄 بطاقة الخطر */
+.theme-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.font-size-select {
+  min-width: 150px;
+  padding: 10px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font: inherit;
+}
+
+.font-size-select:focus-visible {
+  outline: 3px solid #66bb6a;
+  outline-offset: 2px;
+}
+
+.reminder-list {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.reminder-item {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.7fr) minmax(0, 1.5fr) auto;
+  align-items: end;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: var(--bg-page);
+}
+
+.reminder-field {
+  display: grid;
+  gap: 6px;
+  color: var(--label-color);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.reminder-field input,
+.reminder-field textarea,
+.suggestion-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font: inherit;
+}
+
+.reminder-field textarea,
+.suggestion-input {
+  min-height: 44px;
+  resize: vertical;
+}
+
+.reminder-field input:focus-visible,
+.reminder-field textarea:focus-visible,
+.suggestion-input:focus-visible {
+  outline: 3px solid #66bb6a;
+  outline-offset: 2px;
+}
+
+.setting-action-btn,
+.remove-reminder-btn,
+.send-suggestion-btn {
+  border: 0;
+  border-radius: 9px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.setting-action-btn,
+.send-suggestion-btn {
+  padding: 12px 16px;
+  background: #2e7d32;
+  color: #ffffff;
+}
+
+.setting-action-btn:hover,
+.send-suggestion-btn:hover {
+  background: #1b5e20;
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.24);
+  transform: translateY(-1px);
+}
+
+.remove-reminder-btn {
+  min-width: 42px;
+  min-height: 42px;
+  padding: 8px;
+  background: #fde8e7;
+  color: #a51f1b;
+}
+
+.remove-reminder-btn:hover {
+  background: #f8d2cf;
+}
+
+.setting-status {
+  margin-top: 10px;
+  color: var(--desc-color);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.setting-status.error {
+  color: #c62828;
+}
+
+.suggestion-input {
+  min-height: 110px;
+  margin-bottom: 12px;
+}
+
+.theme-toggle {
+  position: relative;
+  width: 52px;
+  height: 30px;
+  flex: 0 0 auto;
+}
+
+.theme-toggle input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.theme-toggle-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: #8b918c;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.theme-toggle-track::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.theme-toggle input:checked + .theme-toggle-track {
+  background: #2e7d32;
+}
+
+.theme-toggle input:checked + .theme-toggle-track::before {
+  transform: translateX(22px);
+}
+
+.theme-toggle input:focus-visible + .theme-toggle-track {
+  outline: 3px solid #66bb6a;
+  outline-offset: 3px;
+}
+
 .setting-card.danger {
   border-color: #ef9a9a;
   background: #fff5f5;
 }
 
+html[data-theme="dark"] .setting-card.danger {
+  border-color: #754949;
+  background: #352727;
+}
+
 .danger-btn {
   width: 100%;
-  padding: 14px;
-  background: var(--reset-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 18px;
+  background: linear-gradient(135deg, #d84b4b, #a91f1f);
   color: #ffffff;
-  border: none;
+  border: 1px solid rgba(125, 20, 20, 0.18);
   border-radius: 10px;
   font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
-  transition: 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
   font-family: inherit;
+  box-shadow: 0 5px 14px rgba(169, 31, 31, 0.2);
 }
 .danger-btn:hover {
-  background: #b71c1c;
+  filter: brightness(0.94);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(198, 40, 40, 0.35);
+  box-shadow: 0 8px 18px rgba(169, 31, 31, 0.3);
 }
 .danger-btn:active { transform: scale(0.98); }
+.danger-btn:focus-visible,
+.setting-action-btn:focus-visible,
+.remove-reminder-btn:focus-visible,
+.send-suggestion-btn:focus-visible {
+  outline: 3px solid #66bb6a;
+  outline-offset: 3px;
+}
 
-/* 📢 رسالة */
 .result-msg {
   text-align: center;
   font-size: 1rem;
@@ -147,7 +353,6 @@ body {
 }
 .result-msg.error { color: #c62828; }
 
-/* 💬 نافذة التأكيد */
 .confirm-overlay {
   position: fixed;
   inset: 0;
@@ -224,13 +429,14 @@ body {
 }
 .confirm-btn.confirm:hover { background: #b71c1c; }
 
-/* 📱 الجوال */
 @media (max-width: 480px) {
   .setting-card { padding: 16px; }
   .setting-title { font-size: 1.05rem; }
   .danger-btn { font-size: 0.9rem; padding: 12px; }
   .confirm-box { padding: 22px 18px; }
   .confirm-title { font-size: 1.15rem; }
+  .reminder-item { grid-template-columns: 1fr auto; }
+  .reminder-field.message { grid-column: 1 / -1; grid-row: 2; }
 }
 </style>
 </head>
@@ -246,14 +452,53 @@ body {
 <div class="page-wrapper">
   <div class="content-wrapper">
 
-    <!-- 🔄 إعادة اللعبة -->
+    <div class="setting-card">
+      <div class="setting-title">🌗 مظهر التطبيق</div>
+      <div class="theme-setting-row">
+        <div class="setting-desc" style="margin-bottom: 0">التبديل بين المظهر الفاتح والداكن في جميع الصفحات.</div>
+        <label class="theme-toggle" aria-label="تفعيل الوضع الداكن">
+          <input type="checkbox" id="themeToggle" role="switch" aria-label="الوضع الداكن">
+          <span class="theme-toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="setting-card">
+      <div class="setting-title">🔠 حجم الخط</div>
+      <div class="theme-setting-row">
+        <div class="setting-desc" style="margin-bottom: 0">اختر حجم النص الذي يناسبك في جميع الصفحات.</div>
+        <select class="font-size-select" id="fontSizeSelect" aria-label="حجم الخط">
+          <option value="small">صغير</option>
+          <option value="medium">متوسط</option>
+          <option value="large">كبير</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="setting-card">
+      <div class="setting-title">🔔 تذكيرات التطبيق</div>
+      <div class="setting-desc">أضف تذكيراتك وحدد وقتها ونصها. في تطبيق Android تُحفظ محلياً وتعمل يومياً حتى عند إغلاق التطبيق.</div>
+      <div class="reminder-list" id="reminderList"></div>
+      <button class="setting-action-btn" type="button" id="addReminderBtn">＋ إضافة تذكير</button>
+      <button class="setting-action-btn" type="button" id="enableNotificationsBtn">🔔 السماح بالإشعارات</button>
+      <div class="setting-status" id="reminderSaveStatus" role="status" aria-live="polite"></div>
+      <div class="setting-status" id="reminderStatus" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="setting-card">
+      <div class="setting-title">💡 اقتراح لتحسين التطبيق</div>
+      <div class="setting-desc">اكتب اقتراحك وسنجهز رسالة بريد إلكتروني لإرسالها.</div>
+      <textarea class="suggestion-input" id="suggestionInput" maxlength="2000" placeholder="اكتب اقتراحك هنا..." aria-label="اقتراح لتحسين التطبيق"></textarea>
+      <button class="send-suggestion-btn" id="sendSuggestionBtn" type="button">✉️ إرسال الاقتراح بالبريد</button>
+      <div class="setting-status" id="suggestionStatus" role="status" aria-live="polite">سيُفتح تطبيق البريد لإكمال الإرسال إلى pcnew870@gmail.com.</div>
+    </div>
+
     <div class="setting-card danger">
       <div class="setting-title">🔄 إعادة اللعبة</div>
       <div class="setting-desc">سيتم حذف كل تقدمك والبدء من جديد — لا يمكن التراجع!</div>
-      <button class="danger-btn" id="resetGameBtn">🗑️ إعادة اللعبة من الأول</button>
+      <button class="danger-btn" id="resetGameBtn"><span aria-hidden="true">🗑️</span><span>إعادة اللعبة من الأول</span></button>
     </div>
 
-    <!-- 📢 رسالة -->
     <div class="result-msg" id="resultMsg"></div>
   </div>
 </div>
@@ -273,13 +518,10 @@ body {
   </div>
 </div>
 
-<!-- 🔊 صوت الأزرار -->
-<audio id="clickSound" src="sonud/buttem.mp3" preload="auto"></audio>
+<!-- 🔊 صوت الأزرار — تصحيح المسار sonud ← sound -->
+<audio id="clickSound" src="sound/buttem.mp3" preload="auto"></audio>
 
 <script>
-/* ============================================================
-   ⚙️ منطق صفحة الإعدادات — إعادة اللعبة فقط
-   ============================================================ */
 (function() {
   const CONFIG = {
     exitUrl: "stages.html",
@@ -295,30 +537,275 @@ body {
   const cancelReset    = document.getElementById('cancelReset');
   const confirmReset   = document.getElementById('confirmReset');
   const clickSound     = document.getElementById('clickSound');
+  const themeToggle    = document.getElementById('themeToggle');
+  const fontSizeSelect = document.getElementById('fontSizeSelect');
+  const fontSizeClasses = ['font-small', 'font-medium', 'font-large'];
+  const reminderList = document.getElementById('reminderList');
+  const reminderSaveStatus = document.getElementById('reminderSaveStatus');
+  const reminderStatus = document.getElementById('reminderStatus');
+  const enableNotificationsBtn = document.getElementById('enableNotificationsBtn');
+  const suggestionInput = document.getElementById('suggestionInput');
+  const suggestionStatus = document.getElementById('suggestionStatus');
+  let reminderSaveTimeout = 0;
 
-  /* ---------- 🔊 الصوت ---------- */
-  function playSound() {
-    if (clickSound) {
-      clickSound.currentTime = 0;
-      clickSound.play().catch(() => {});
+  function applyTheme(theme) {
+    const isDark = theme === 'dark';
+    themeToggle.checked = isDark;
+    document.documentElement.toggleAttribute('data-theme', isDark);
+  }
+
+  applyTheme(localStorage.getItem('app_theme') || 'light');
+  themeToggle.addEventListener('change', () => {
+    const theme = themeToggle.checked ? 'dark' : 'light';
+    localStorage.setItem('app_theme', theme);
+    applyTheme(theme);
+  });
+
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'app_theme') {
+      applyTheme(event.newValue || 'light');
+    }
+    if (event.key === 'app_font_size') {
+      applyFontSize(event.newValue || 'medium');
+    }
+  });
+
+  function applyFontSize(size) {
+    const validSize = ['small', 'medium', 'large'].includes(size) ? size : 'medium';
+    document.documentElement.classList.remove(...fontSizeClasses);
+    document.documentElement.classList.add(`font-${validSize}`);
+    fontSizeSelect.value = validSize;
+  }
+
+  applyFontSize(localStorage.getItem('app_font_size') || 'medium');
+  fontSizeSelect.addEventListener('change', () => {
+    localStorage.setItem('app_font_size', fontSizeSelect.value);
+    applyFontSize(fontSizeSelect.value);
+  });
+
+  const REMINDERS_KEY = 'app_reminders';
+  function loadReminders() {
+    const saved = localStorage.getItem(REMINDERS_KEY);
+    if (saved === null) {
+      return [{ id: 'morning-reminder', time: '07:00', message: 'حان وقت التعلم! افتح التطبيق وابدأ.' }];
+    }
+
+    try {
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) throw new Error('صيغة التذكيرات غير صحيحة');
+      return parsed.filter(item =>
+        item && typeof item.id === 'string' &&
+        typeof item.time === 'string' &&
+        typeof item.message === 'string'
+      );
+    } catch (error) {
+      console.warn('تعذر قراءة التذكيرات المحفوظة:', error);
+      reminderSaveStatus.textContent = 'تعذر تحميل التذكيرات المحفوظة. أضف تذكيراً جديداً.';
+      reminderSaveStatus.classList.add('error');
+      return [];
     }
   }
 
+  function saveReminders() {
+    window.clearTimeout(reminderSaveTimeout);
+    localStorage.setItem(REMINDERS_KEY, JSON.stringify(reminders));
+    reminderSaveStatus.textContent = 'تم حفظ التذكيرات على هذا الجهاز.';
+    reminderSaveStatus.classList.remove('error');
+    if (window.AndroidNotifications) {
+      try {
+        const result = window.AndroidNotifications.saveReminders(JSON.stringify(reminders));
+        if (result !== 'saved') {
+          reminderSaveStatus.textContent = 'تعذر حفظ الإشعارات على الجهاز. حاول مرة أخرى.';
+          reminderSaveStatus.classList.add('error');
+        }
+      } catch (error) {
+        console.error('تعذر جدولة الإشعارات على Android:', error);
+        reminderSaveStatus.textContent = 'تعذر حفظ الإشعارات على الجهاز.';
+        reminderSaveStatus.classList.add('error');
+      }
+    }
+  }
+
+  function renderReminders() {
+    reminderList.replaceChildren();
+
+    reminders.forEach((reminder, index) => {
+      const row = document.createElement('div');
+      row.className = 'reminder-item';
+
+      const timeLabel = document.createElement('label');
+      timeLabel.className = 'reminder-field';
+      timeLabel.textContent = 'وقت الإشعار';
+      const timeInput = document.createElement('input');
+      timeInput.type = 'time';
+      timeInput.value = reminder.time;
+      timeInput.setAttribute('aria-label', `وقت التذكير ${index + 1}`);
+      timeInput.addEventListener('change', () => {
+        reminders[index].time = timeInput.value;
+        saveReminders();
+      });
+      timeLabel.appendChild(timeInput);
+
+      const messageLabel = document.createElement('label');
+      messageLabel.className = 'reminder-field message';
+      messageLabel.textContent = 'نص الإشعار';
+      const messageInput = document.createElement('textarea');
+      messageInput.value = reminder.message;
+      messageInput.maxLength = 200;
+      messageInput.placeholder = 'اكتب نص التذكير';
+      messageInput.setAttribute('aria-label', `نص التذكير ${index + 1}`);
+      messageInput.addEventListener('input', () => {
+        reminders[index].message = messageInput.value;
+        reminderSaveStatus.textContent = 'جارٍ حفظ التذكير...';
+        reminderSaveTimeout = window.setTimeout(saveReminders, 500);
+      });
+      messageInput.addEventListener('change', saveReminders);
+      messageLabel.appendChild(messageInput);
+
+      const removeButton = document.createElement('button');
+      removeButton.className = 'remove-reminder-btn';
+      removeButton.type = 'button';
+      removeButton.textContent = 'حذف';
+      removeButton.setAttribute('aria-label', `حذف التذكير ${index + 1}`);
+      removeButton.addEventListener('click', () => {
+        reminders.splice(index, 1);
+        saveReminders();
+        renderReminders();
+      });
+
+      row.append(timeLabel, messageLabel, removeButton);
+      reminderList.appendChild(row);
+    });
+  }
+
+  let reminders = loadReminders();
+  renderReminders();
+  if (localStorage.getItem(REMINDERS_KEY) === null) saveReminders();
+
+  document.getElementById('addReminderBtn').addEventListener('click', () => {
+    reminders.push({
+      id: `reminder-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      time: '07:00',
+      message: ''
+    });
+    saveReminders();
+    renderReminders();
+    reminderList.lastElementChild.querySelector('textarea').focus();
+  });
+
+  function updateNotificationStatus() {
+    if (window.AndroidNotifications) {
+      try {
+        const status = window.AndroidNotifications.getNotificationStatus();
+        const messages = {
+          granted: 'الإشعارات المحلية مفعّلة، وستعمل حتى عند إغلاق التطبيق.',
+          notification_permission: 'اسمح للتطبيق بإرسال الإشعارات من نافذة أذونات Android.',
+          exact_alarm_permission: 'فعّل «المنبهات والتذكيرات» من إعدادات Android لضمان وصول الإشعار في موعده.'
+        };
+        reminderStatus.textContent = messages[status] || 'تحقق من أذونات الإشعارات والمنبهات في إعدادات Android.';
+        reminderStatus.classList.toggle('error', status !== 'granted');
+      } catch (error) {
+        console.error('تعذر التحقق من أذونات Android:', error);
+        reminderStatus.textContent = 'تعذر التحقق من أذونات الإشعارات في Android.';
+        reminderStatus.classList.add('error');
+      }
+      return;
+    }
+    if (!('Notification' in window)) {
+      reminderStatus.textContent = 'إشعارات Android المجدولة تحتاج إلى تثبيت تطبيق Android.';
+      reminderStatus.classList.add('error');
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      reminderStatus.textContent = 'إشعارات المتصفح مفعّلة أثناء تشغيل التطبيق.';
+      reminderStatus.classList.remove('error');
+    } else if (Notification.permission === 'denied') {
+      reminderStatus.textContent = 'الإشعارات محظورة من المتصفح. استخدم تطبيق Android للإشعارات المجدولة.';
+      reminderStatus.classList.add('error');
+    } else {
+      reminderStatus.textContent = 'في المتصفح، الإشعارات لا تعمل بعد إغلاق التطبيق. ثبّت تطبيق Android للتنبيهات المحلية.';
+      reminderStatus.classList.remove('error');
+    }
+  }
+
+  updateNotificationStatus();
+  window.addEventListener('native-notification-permission-change', updateNotificationStatus);
+  enableNotificationsBtn.addEventListener('click', async () => {
+    if (window.AndroidNotifications) {
+      try {
+        window.AndroidNotifications.requestNotificationPermissions();
+      } catch (error) {
+        console.error('تعذر طلب أذونات إشعارات Android:', error);
+        reminderStatus.textContent = 'تعذر فتح أذونات الإشعارات. تحقق من إعدادات Android.';
+        reminderStatus.classList.add('error');
+      }
+      return;
+    }
+    if (!('Notification' in window)) {
+      updateNotificationStatus();
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      updateNotificationStatus();
+      return;
+    }
+    try {
+      await Notification.requestPermission();
+      updateNotificationStatus();
+    } catch (error) {
+      console.error('تعذر طلب إذن الإشعارات:', error);
+      reminderStatus.textContent = 'تعذر طلب إذن الإشعارات. تحقق من إعدادات المتصفح.';
+      reminderStatus.classList.add('error');
+    }
+  });
+
+  document.getElementById('sendSuggestionBtn').addEventListener('click', () => {
+    const suggestion = suggestionInput.value.trim();
+    if (!suggestion) {
+      suggestionStatus.textContent = 'اكتب اقتراحك أولاً.';
+      suggestionStatus.classList.add('error');
+      suggestionInput.focus();
+      return;
+    }
+    const subject = encodeURIComponent('اقتراح لتحسين تطبيق حديث');
+    const body = encodeURIComponent(suggestion);
+    window.location.href = `mailto:pcnew870@gmail.com?subject=${subject}&body=${body}`;
+    suggestionStatus.textContent = 'فُتح تطبيق البريد. اضغط «إرسال» لإيصال اقتراحك.';
+    suggestionStatus.classList.remove('error');
+  });
+
+  /* ---------- 🔊 الصوت ---------- */
+  let lastPlay = 0;
+  function playSound() {
+    if (!clickSound) return;
+    const now = Date.now();
+    if (now - lastPlay < 120) return;
+    lastPlay = now;
+    try {
+      clickSound.pause();
+      clickSound.currentTime = 0;
+      clickSound.play().catch(() => {});
+    } catch (e) {}
+  }
+
+  /* ---------- مستمع عام لكل الأزرار ---------- */
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    if (btn.disabled) return;
+    playSound();
+  }, true);
+
   /* ---------- زر إعادة اللعبة ---------- */
   resetGameBtn.addEventListener('click', () => {
-    playSound();
     confirmOverlay.classList.add('show');
   });
 
   cancelReset.addEventListener('click', () => {
-    playSound();
     confirmOverlay.classList.remove('show');
   });
 
   confirmReset.addEventListener('click', () => {
-    playSound();
-
-    // 🗑️ احذف كل مفاتيح تقدم اللعبة
     localStorage.removeItem(CONFIG.exercisesStagesKey);
     localStorage.removeItem(CONFIG.solvedListKey);
 

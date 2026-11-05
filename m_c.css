@@ -37,22 +37,109 @@
 /* 🌙 الوضع الداكن */
 html[data-theme="dark"],
 html[data-theme="dark"] body {
-  --bg-page: #1a1a1a;
-  --text-color: #e8e8e8;
-  --frame-color: #1b5e20;
-  --frame-text: #ffffff;
-  --label-color: #ffffff;
-  --cream-color: #2c2c2c;
-  --divider-color: #555555;
+  color-scheme: dark;
+  --bg-page: #121a16;
+  --text-color: #edf4ef;
+  --frame-color: #205536;
+  --frame-text: #f4fff6;
+  --exit-text: #d3e2d7;
+  --label-color: #e5f1e8;
+  --cream-color: #26352c;
+  --divider-color: #52665a;
+  --border-color: #394b3f;
+  --box-bg: #202b24;
+  --btn-bg: #2a382f;
+  --btn-text: #edf4ef;
+  --btn-border: #52665a;
+  --btn-next-bg: #286344;
+  --drop-bg: #2d704b;
+  --item-bg: #286344;
+  --item-text: #ffffff;
+  --option-bg: #202b24;
+  --option-border: #52665a;
+  --option-hover: #2b3a30;
+  --option-correct: #285d3b;
+  --option-wrong: #633b3b;
 
-  --card-bg: #2a2a2a;
-  --card-border: #444444;
+  --card-bg: #202b24;
+  --card-border: #394b3f;
   --card-shadow: rgba(0,0,0,0.4);
-  --desc-color: #aaaaaa;
-  --btn-bg: #333333;
-  --btn-bg-hover: #3a3a3a;
-  --btn-cancel-bg: #3a3a3a;
+  --desc-color: #b7c5bb;
+  --btn-bg-hover: #35463a;
+  --btn-cancel-bg: #35463a;
   --btn-cancel-text: #ffffff;
+  --stage-bg: #34463a;
+  --stage-completed-bg: #286344;
+  --stage-current-bg: #34764f;
+  --stage-locked-opacity: 0.42;
+  --line-color: #65796b;
+}
+
+html[data-theme="dark"] body {
+  background: var(--bg-page) !important;
+}
+
+html[data-theme="dark"] .animated-bg {
+  background: linear-gradient(135deg, #121a16 0%, #1b2920 50%, #121a16 100%) !important;
+}
+
+html[data-theme="dark"] .stage-circle {
+  border-color: rgba(224, 245, 230, 0.2);
+}
+
+html[data-theme="dark"] .stage-circle.current {
+  animation-name: darkPulse;
+}
+
+@keyframes darkPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 5px rgba(80, 170, 112, 0.2),
+                0 6px 14px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(80, 170, 112, 0.07),
+                0 6px 14px rgba(0, 0, 0, 0.4);
+  }
+}
+
+html[data-theme="dark"] .setting-card,
+html[data-theme="dark"] .confirm-box,
+html[data-theme="dark"] .player-card,
+html[data-theme="dark"] .stat-box,
+html[data-theme="dark"] .text-box,
+html[data-theme="dark"] .question-box,
+html[data-theme="dark"] .sentence-box {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color);
+  border-color: var(--card-border);
+}
+
+html[data-theme="dark"] .fixed-actions,
+html[data-theme="dark"] .page-wrapper {
+  background-color: var(--bg-page);
+}
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select,
+html[data-theme="dark"] .nav-btn:not(.next):not(.finish):not(.reset):not(.check) {
+  background-color: var(--btn-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+html[data-theme="dark"] .stat-label,
+html[data-theme="dark"] .setting-desc,
+html[data-theme="dark"] .confirm-desc {
+  color: var(--desc-color);
+}
+
+html[data-theme="dark"] .progress-bar {
+  background: #39413b;
+}
+
+html[data-theme="dark"] .drop-slot.filled {
+  color: var(--text-color);
 }
 
 /* 🔠 أحجام الخط */

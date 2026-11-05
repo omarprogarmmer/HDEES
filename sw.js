@@ -2,45 +2,11 @@
 // Service Worker - حديث (my-app)
 // ============================================
 
-const CACHE_NAME = 'hadeeth-app-v1';
+const CACHE_NAME = 'hadeeth-app-v4';
 
 const PRECACHE_ASSETS = [
-  // // ===== صفحة الانتظار =====
-  // './loading.html',
+  
 
-  // // ===== ملفات CSS =====
-  // './losson.css',
-  // './style_test.css',
-
-  // // ===== ملفات JavaScript =====
-  // './losson.js',
-  // './script_test.js',
-
-  // ===== ملفات HTML =====
-  // './register.html',
-  // './index.html',
-  // './about.html',
-  // './profile.html',
-  // './start_1.html',
-  // './stages.html',
-  // './g1_level1.html',
-  // './g1_t1.html',
-  // './g1_t2.html',
-  // './g2_level1.html',
-  // './g2_t1.html',
-  // './g2_t2.html',
-  // './g2_t3.html',
-  // './g3_level1.html',
-  // './g3_t2.html',
-  // './g3_t3.html',
-  // './g4_level1.html',
-  // './g4_t3.html',
-  // './g4_t2.html',
-
-  // // ===== ملفات الإعداد =====
-  // './manifest.json',
-
-  // ===== الأيقونات (ضرورية للتثبيت) =====
   './icon-192.png',
   './icon-512.png',
 
@@ -144,6 +110,17 @@ self.addEventListener('activate', event => {
         );
       })
       .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+      const appClient = clients.find(client => client.url.startsWith(self.registration.scope));
+      if (appClient) return appClient.focus();
+      return self.clients.openWindow(self.registration.scope);
+    })
   );
 });
 

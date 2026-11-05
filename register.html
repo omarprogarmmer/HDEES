@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<script src="stting_mc.js"></script>
+<script src="reminders.js"></script>
+<link rel="stylesheet" href="m_c.css">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>حديث — البدء</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0a0e27">
+<meta name="theme-color" content="#2e7d32">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="حديث">
@@ -14,12 +18,23 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
 
   /* ============================================================
-     🌌 خلفية احترافية داكنة
+     🎨 ألوان خضراء ودرجاتها
      ============================================================ */
+  :root {
+    --green-deep:   #0f3d1e;  /* أخضر عميق جداً */
+    --green-dark:   #1b5e20;  /* أخضر داكن */
+    --green-mid:    #2e7d32;  /* أخضر متوسط */
+    --green-main:   #43a047;  /* أخضر أساسي */
+    --green-light:  #66bb6a;  /* أخضر فاتح */
+    --green-lime:   #8bc34a;  /* أخضر ليموني */
+    --green-soft:   #a5d6a7;  /* أخضر ناعم */
+    --green-pale:   #c8e6c9;  /* أخضر شاحب */
+  }
+
   body {
     min-height: 100vh;
     display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1428 100%);
+    background: linear-gradient(135deg, #0f3d1e 0%, #1b5e20 35%, #43a047 65%, #0f3d1e 100%);
     background-size: 300% 300%;
     animation: bgShift 18s ease infinite;
     padding: 20px;
@@ -32,9 +47,46 @@
     50%      { background-position: 100% 50%; }
   }
 
-  /* ============================================================
-     🌟 تأثيرات خلف البطاقة
-     ============================================================ */
+  /* ☁️ طبقة الغيوم */
+  .clouds-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 100px;
+    filter: blur(8px);
+    will-change: transform;
+    animation: cloudDrift linear infinite;
+  }
+
+  .cloud::before,
+  .cloud::after {
+    content: "";
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+  }
+  .cloud::before {
+    width: 55%; height: 140%;
+    top: -60%; left: 15%;
+  }
+  .cloud::after {
+    width: 45%; height: 120%;
+    top: -40%; right: 15%;
+  }
+
+  @keyframes cloudDrift {
+    0%   { transform: translateX(110vw) translateY(0) scale(1); }
+    100% { transform: translateX(-30vw) translateY(-10px) scale(1.05); }
+  }
+
+  /* ✨ هالات متوهجة */
   .card-effects {
     position: fixed;
     inset: 0;
@@ -43,7 +95,6 @@
     overflow: hidden;
   }
 
-  /* 1️⃣ هالة متوهجة زرقاء سماوية */
   .glow-orb {
     position: absolute;
     top: 50%; left: 50%;
@@ -51,25 +102,23 @@
     margin: -260px 0 0 -260px;
     border-radius: 50%;
     background: radial-gradient(circle,
-      rgba(64, 156, 255, 0.35) 0%,
-      rgba(64, 156, 255, 0.12) 40%,
+      rgba(102, 187, 106, 0.42) 0%,
+      rgba(139, 195, 74, 0.15) 40%,
       transparent 70%);
     filter: blur(60px);
     animation: orbFloat 14s ease-in-out infinite,
                orbPulse 7s ease-in-out infinite;
   }
-
   .glow-orb.orb-2 {
     width: 360px; height: 360px;
     margin: -180px 0 0 -180px;
     background: radial-gradient(circle,
-      rgba(138, 43, 226, 0.28) 0%,
-      rgba(138, 43, 226, 0.08) 45%,
+      rgba(139, 195, 74, 0.32) 0%,
+      rgba(67, 160, 71, 0.1) 45%,
       transparent 70%);
     animation: orbFloat2 17s ease-in-out infinite,
                orbPulse 9s ease-in-out infinite reverse;
   }
-
   @keyframes orbFloat {
     0%, 100% { transform: translate(-40px, -30px) scale(1); }
     50%      { transform: translate(50px, 40px) scale(1.12); }
@@ -79,75 +128,50 @@
     50%      { transform: translate(-60px, -40px) scale(1.18); }
   }
   @keyframes orbPulse {
-    0%, 100% { opacity: 0.55; }
+    0%, 100% { opacity: 0.6; }
     50%      { opacity: 1; }
   }
 
-  /* 2️⃣ حلقات نابضة */
-  .pulse-ring {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 320px; height: 320px;
-    margin: -160px 0 0 -160px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(64, 156, 255, 0.3);
-    animation: ringExpand 6s ease-out infinite;
-  }
-  .pulse-ring:nth-child(3) { animation-delay: 0s; }
-  .pulse-ring:nth-child(4) { animation-delay: 2s; }
-  .pulse-ring:nth-child(5) { animation-delay: 4s; }
-
-  @keyframes ringExpand {
-    0%   { transform: scale(0.5); opacity: 0.8; border-color: rgba(64,156,255,0.4); }
-    100% { transform: scale(2.4); opacity: 0;   border-color: rgba(64,156,255,0); }
-  }
-
-  /* ============================================================
-     🃏 البطاقة
-     ============================================================ */
+  /* 🃏 البطاقة */
   .card {
     position: relative;
     z-index: 1;
-    background: rgba(20, 25, 48, 0.85);
+    background: rgba(15, 45, 22, 0.78);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(64, 156, 255, 0.25);
+    border: 1px solid rgba(102, 187, 106, 0.35);
     border-radius: 20px;
     padding: 32px 24px 28px;
     width: 100%; max-width: 440px;
     box-shadow:
       0 20px 60px rgba(0, 0, 0, 0.5),
-      0 0 40px rgba(64, 156, 255, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      0 0 40px rgba(102, 187, 106, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
     animation: fadeIn 0.5s ease,
                cardGlow 5s ease-in-out infinite;
     overflow: hidden;
   }
-
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-
   @keyframes cardGlow {
     0%, 100% {
       box-shadow:
         0 20px 60px rgba(0, 0, 0, 0.5),
-        0 0 40px rgba(64, 156, 255, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        0 0 40px rgba(102, 187, 106, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
     50% {
       box-shadow:
         0 24px 70px rgba(0, 0, 0, 0.6),
-        0 0 80px rgba(64, 156, 255, 0.3),
-        0 0 120px rgba(64, 156, 255, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        0 0 80px rgba(102, 187, 106, 0.4),
+        0 0 120px rgba(139, 195, 74, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
   }
 
-  /* ============================================================
-     🧭 الخطوات
-     ============================================================ */
+  /* 🧭 نظام الخطوات */
   .step { display: none; }
   .step.active { display: block; animation: stepIn 0.4s ease; }
   @keyframes stepIn {
@@ -161,20 +185,17 @@
   }
   .steps-indicator .dot {
     width: 8px; height: 8px; border-radius: 50%;
-    background: rgba(255,255,255,0.2); transition: 0.3s;
+    background: rgba(200, 230, 201, 0.25); transition: 0.3s;
   }
   .steps-indicator .dot.active {
-    background: linear-gradient(135deg, #409cff, #8a2be2);
+    background: linear-gradient(135deg, #66bb6a, #8bc34a);
     width: 26px; border-radius: 4px;
-    box-shadow: 0 0 12px rgba(64,156,255,0.6);
+    box-shadow: 0 0 12px rgba(102, 187, 106, 0.7);
   }
 
-  /* ============================================================
-     📝 نصوص ومدخلات
-     ============================================================ */
   h1 {
     font-size: 22px;
-    background: linear-gradient(135deg, #409cff, #8a2be2);
+    background: linear-gradient(135deg, #66bb6a, #8bc34a, #c8e6c9);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -185,38 +206,35 @@
 
   label {
     display: block; font-size: 13px; font-weight: 700;
-    color: rgba(200, 215, 255, 0.85); margin-bottom: 6px;
+    color: rgba(200, 230, 201, 0.9); margin-bottom: 6px;
   }
 
   input {
     width: 100%; padding: 12px 14px; margin-bottom: 14px;
-    border: 1.5px solid rgba(64, 156, 255, 0.25);
+    border: 1.5px solid rgba(102, 187, 106, 0.3);
     border-radius: 10px;
     font-size: 15px; outline: none; transition: 0.25s;
-    background: rgba(255, 255, 255, 0.04);
-    color: #e8f0ff;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e8ffe8;
   }
-  input::placeholder { color: rgba(200, 215, 255, 0.35); }
+  input::placeholder { color: rgba(200, 230, 201, 0.4); }
   input:focus {
-    border-color: rgba(64, 156, 255, 0.7);
-    background: rgba(64, 156, 255, 0.08);
-    box-shadow: 0 0 0 3px rgba(64, 156, 255, 0.15);
+    border-color: rgba(102, 187, 106, 0.8);
+    background: rgba(102, 187, 106, 0.1);
+    box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.2);
   }
 
   .error {
-    color: #ff6b6b; font-size: 12px; font-weight: 600;
+    color: #ff8080; font-size: 12px; font-weight: 600;
     margin-top: -8px; margin-bottom: 12px; min-height: 16px;
   }
 
-  /* ============================================================
-     🔘 الأزرار
-     ============================================================ */
   button.primary {
     width: 100%; padding: 14px; border: none; border-radius: 12px;
-    background: linear-gradient(135deg, #409cff, #8a2be2);
+    background: linear-gradient(135deg, #43a047, #8bc34a);
     color: #fff; font-size: 15px; font-weight: 800;
     cursor: pointer; transition: 0.3s;
-    box-shadow: 0 8px 24px rgba(64,156,255,0.35);
+    box-shadow: 0 8px 24px rgba(67, 160, 71, 0.45);
     position: relative;
     overflow: hidden;
   }
@@ -226,93 +244,224 @@
     top: 0; left: -100%;
     width: 100%; height: 100%;
     background: linear-gradient(90deg,
-      transparent, rgba(255,255,255,0.3), transparent);
+      transparent, rgba(255,255,255,0.35), transparent);
     transition: 0.6s;
   }
   button.primary:hover::after { left: 100%; }
   button.primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(64,156,255,0.5);
+    box-shadow: 0 12px 32px rgba(67, 160, 71, 0.6);
   }
 
-  /* ============================================================
-     📲 الخطوة 2 — التثبيت
-     ============================================================ */
   .install-icon {
     width: 96px; height: 96px;
     border-radius: 24px;
     margin: 0 auto 18px;
-    background: linear-gradient(135deg, #409cff, #8a2be2);
+    background: linear-gradient(135deg, #43a047, #8bc34a);
     display: flex; align-items: center; justify-content: center;
     font-size: 46px; color: #fff;
-    box-shadow: 0 10px 30px rgba(64,156,255,0.4);
+    box-shadow: 0 10px 30px rgba(67, 160, 71, 0.5);
     animation: iconFloat 3s ease-in-out infinite;
   }
-
   @keyframes iconFloat {
     0%, 100% { transform: translateY(0); }
     50%      { transform: translateY(-6px); }
   }
 
   .install-subtitle {
-    font-size: 14px; color: rgba(200, 215, 255, 0.7);
+    font-size: 14px; color: rgba(200, 230, 201, 0.75);
     line-height: 1.7; margin-bottom: 22px; text-align: center;
   }
 
-  .install-btn {
-    width: 100%; padding: 15px; border: none; border-radius: 12px;
-    background: linear-gradient(135deg, #409cff, #8a2be2);
-    color: #fff; font-size: 16px; font-weight: 800;
-    cursor: pointer; transition: 0.3s;
-    box-shadow: 0 8px 24px rgba(64,156,255,0.35);
-    display: flex; align-items: center; justify-content: center; gap: 8px;
+  /* 📱 أزرار اختيار الجهاز */
+  .device-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 8px;
   }
-  .install-btn:hover:not(:disabled) {
+
+  .device-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 16px 18px;
+    border: 1.5px solid rgba(102, 187, 106, 0.3);
+    border-radius: 14px;
+    background: rgba(102, 187, 106, 0.08);
+    color: #e8ffe8;
+    font-size: 15px;
+    font-weight: 800;
+    font-family: inherit;
+    cursor: pointer;
+    transition: 0.25s;
+    text-align: right;
+  }
+  .device-btn:hover,
+  .device-btn:focus {
+    background: rgba(102, 187, 106, 0.18);
+    border-color: rgba(102, 187, 106, 0.7);
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(64,156,255,0.5);
+    box-shadow: 0 8px 22px rgba(67, 160, 71, 0.3);
   }
-  .install-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+  .device-btn .device-icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+  .device-btn .device-label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .device-btn .device-name { font-weight: 800; font-size: 15px; }
+  .device-btn .device-hint {
+    font-weight: 600;
+    font-size: 12px;
+    color: rgba(200, 230, 201, 0.65);
+  }
+  .device-btn .device-arrow {
+    font-size: 18px;
+    color: rgba(200, 230, 201, 0.5);
+  }
+
+  /* 📖 صفحة شرح التثبيت */
+  .guide-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .back-btn {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(102, 187, 106, 0.35);
+    background: rgba(102, 187, 106, 0.08);
+    color: #e8ffe8;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .back-btn:hover {
+    background: rgba(102, 187, 106, 0.2);
+    border-color: rgba(102, 187, 106, 0.75);
+  }
+
+  .guide-title {
+    flex: 1;
+    font-size: 18px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #66bb6a, #8bc34a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: right;
+  }
+
+  .guide-icon-big {
+    width: 88px;
+    height: 88px;
+    border-radius: 22px;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, #43a047, #8bc34a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    color: #fff;
+    box-shadow: 0 10px 30px rgba(67, 160, 71, 0.5);
+    animation: iconFloat 3s ease-in-out infinite;
+  }
+
+  .guide-desc {
+    font-size: 13px;
+    color: rgba(200, 230, 201, 0.75);
+    line-height: 1.7;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(102, 187, 106, 0.08);
+    border: 1px solid rgba(102, 187, 106, 0.2);
+    border-radius: 12px;
+  }
+
+  .step-item .step-num {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #43a047, #8bc34a);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(67, 160, 71, 0.35);
+  }
+
+  .step-item .step-text {
+    flex: 1;
+    font-size: 13.5px;
+    color: rgba(200, 230, 201, 0.9);
+    line-height: 1.6;
+  }
+  .step-item .step-text strong {
+    color: #a5d6a7;
+    font-weight: 800;
+  }
 
   .skip-btn {
-    display: block; width: 100%; margin-top: 12px;
-    padding: 12px; background: transparent;
-    border: 1.5px solid rgba(64, 156, 255, 0.3);
+    display: block; width: 100%; margin-top: 8px;
+    padding: 14px; background: linear-gradient(135deg, #43a047, #8bc34a);
+    border: none;
     border-radius: 12px;
-    color: rgba(200, 215, 255, 0.8); font-size: 14px; font-weight: 700;
+    color: #fff; font-size: 15px; font-weight: 800;
     cursor: pointer; transition: 0.25s;
+    box-shadow: 0 8px 24px rgba(67, 160, 71, 0.45);
   }
   .skip-btn:hover {
-    background: rgba(64, 156, 255, 0.1);
-    border-color: rgba(64, 156, 255, 0.7);
-    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(67, 160, 71, 0.6);
   }
 
   .hint {
-    margin-top: 16px; font-size: 12px;
-    color: rgba(200, 215, 255, 0.7);
+    margin-top: 14px; font-size: 12px;
+    color: rgba(200, 230, 201, 0.75);
     line-height: 1.7; padding: 12px;
-    background: rgba(64, 156, 255, 0.08);
+    background: rgba(102, 187, 106, 0.1);
     border-radius: 10px; text-align: right;
-    border-right: 3px solid #409cff;
+    border-right: 3px solid #66bb6a;
   }
 
-  .success-msg {
-    color: #4ade80; font-size: 13px; font-weight: 700;
-    margin-top: 10px; min-height: 18px; text-align: center;
-  }
-
-  /* ============================================================
-     📱 استجابة
-     ============================================================ */
   @media (max-width: 480px) {
     .glow-orb { width: 360px; height: 360px; margin: -180px 0 0 -180px; filter: blur(50px); }
     .glow-orb.orb-2 { width: 260px; height: 260px; margin: -130px 0 0 -130px; }
-    .pulse-ring { width: 240px; height: 240px; margin: -120px 0 0 -120px; }
     .card { padding: 28px 20px 24px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .glow-orb, .pulse-ring, .card, .install-icon {
+    .glow-orb, .card, .install-icon, .guide-icon-big, .cloud {
       animation: none !important;
     }
   }
@@ -320,26 +469,26 @@
 </head>
 <body>
 
-<!-- 🌟 تأثيرات خلف البطاقة -->
+<audio id="clickSound" src="sound/buttem.mp3" preload="auto"></audio>
+
+<div class="clouds-layer" id="cloudsLayer" aria-hidden="true"></div>
+
 <div class="card-effects" aria-hidden="true">
   <div class="glow-orb"></div>
   <div class="glow-orb orb-2"></div>
-  <div class="pulse-ring"></div>
-  <div class="pulse-ring"></div>
-  <div class="pulse-ring"></div>
 </div>
 
-<!-- 🃏 البطاقة -->
 <div class="card">
 
   <div class="steps-indicator">
     <div class="dot active" id="dot1"></div>
     <div class="dot" id="dot2"></div>
+    <div class="dot" id="dot3"></div>
   </div>
 
   <!-- الخطوة 1 — التسجيل -->
   <div class="step active" id="step1">
-    <h1>👋 مرحباً بك في حديث</h1>
+    <h1>👋 مرحباً بك في|حديث|</h1>
 
     <label for="username">اسم المستخدم</label>
     <input type="text" id="username" placeholder="اكتب اسمك" maxlength="20">
@@ -352,23 +501,60 @@
     <button class="primary" id="nextBtn">متابعة ←</button>
   </div>
 
-  <!-- الخطوة 2 — التثبيت -->
+  <!-- الخطوة 2 — اختيار الجهاز -->
   <div class="step" id="step2">
     <div class="install-icon">💬</div>
 
     <h1 style="margin-bottom:10px;">ثبّت تطبيق حديث</h1>
     <p class="install-subtitle">
-      أضف تطبيق <strong>حديث</strong> إلى الشاشة الرئيسية للوصول السريع في أي وقت،
-      وتجربة استخدام كاملة بدون متصفح.
+      اختر جهازك لنعرض لك خطوات التثبيت المناسبة له.
     </p>
 
-    <button class="install-btn" id="installBtn" disabled>
-      ⬇️ إضافة حديث إلى الشاشة الرئيسية
-    </button>
+    <div class="device-choices">
+      <button class="device-btn" data-device="android">
+        <span class="device-icon">📱</span>
+        <span class="device-label">
+          <span class="device-name">أندرويد</span>
+          <span class="device-hint">Chrome · Edge · Samsung</span>
+        </span>
+        <span class="device-arrow">←</span>
+      </button>
+
+      <button class="device-btn" data-device="ios">
+        <span class="device-icon">🍎</span>
+        <span class="device-label">
+          <span class="device-name">آيفون / آيباد</span>
+          <span class="device-hint">Safari</span>
+        </span>
+        <span class="device-arrow">←</span>
+      </button>
+
+      <button class="device-btn" data-device="desktop">
+        <span class="device-icon">💻</span>
+        <span class="device-label">
+          <span class="device-name">كمبيوتر</span>
+          <span class="device-hint">Chrome · Edge</span>
+        </span>
+        <span class="device-arrow">←</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- الخطوة 3 — شرح التثبيت -->
+  <div class="step" id="step3">
+    <div class="guide-header">
+      <button class="back-btn" id="backBtn" title="رجوع">→</button>
+      <div class="guide-title" id="guideTitle">—</div>
+    </div>
+
+    <div class="guide-icon-big" id="guideIcon">📱</div>
+
+    <p class="guide-desc" id="guideDesc">—</p>
+
+    <div class="steps-list" id="stepsList"></div>
 
     <button class="skip-btn" id="skipBtn">تخطي الآن ←</button>
-
-    <div class="success-msg" id="successMsg"></div>
 
     <div class="hint" id="hintBox" style="display:none;"></div>
   </div>
@@ -376,6 +562,64 @@
 </div>
 
 <script>
+/* ============================================================
+   ☁️ توليد الغيوم
+   ============================================================ */
+function createClouds() {
+  const layer = document.getElementById('cloudsLayer');
+  if (!layer) return;
+
+  for (let i = 0; i < 8; i++) {
+    const cloud = document.createElement('div');
+    cloud.className = 'cloud';
+
+    const width = 120 + Math.random() * 180;
+    const height = width * (0.35 + Math.random() * 0.15);
+    const topPos = Math.random() * 90;
+    const duration = 40 + Math.random() * 50;
+    const opacity = 0.12 + Math.random() * 0.18;
+
+    cloud.style.width = width + 'px';
+    cloud.style.height = height + 'px';
+    cloud.style.top = topPos + '%';
+    cloud.style.background = `rgba(255, 255, 255, ${opacity})`;
+    cloud.style.filter = `blur(${6 + Math.random() * 6}px)`;
+    cloud.style.animationDuration = duration + 's';
+    cloud.style.animationDelay = -(Math.random() * duration) + 's';
+
+    layer.appendChild(cloud);
+  }
+}
+
+/* ============================================================
+   🔊 صوت الأزرار
+   ============================================================ */
+(function () {
+  function initButtonSound() {
+    const clickSound = document.getElementById('clickSound');
+    if (!clickSound) return;
+
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      if (btn.disabled) return;
+
+      try {
+        clickSound.pause();
+        clickSound.currentTime = 0;
+        const p = clickSound.play();
+        if (p && p.catch) p.catch(() => {});
+      } catch (err) {}
+    }, true);
+  }
+
+  if (document.readyState === 'complete') {
+    initButtonSound();
+  } else {
+    window.addEventListener('load', initButtonSound);
+  }
+})();
+
 /* ============================================================
    🚀 تسجيل Service Worker
    ============================================================ */
@@ -388,23 +632,25 @@ if ("serviceWorker" in navigator) {
 }
 
 /* ============================================================
-   🧭 التنقل بين الخطوتين
+   🧭 نظام الخطوات
    ============================================================ */
 const step1El = document.getElementById("step1");
 const step2El = document.getElementById("step2");
+const step3El = document.getElementById("step3");
 const dot1    = document.getElementById("dot1");
 const dot2    = document.getElementById("dot2");
+const dot3    = document.getElementById("dot3");
+const steps   = [step1El, step2El, step3El];
+const dots    = [dot1, dot2, dot3];
 
-function goToStep2() {
-  step1El.classList.remove("active");
-  step2El.classList.add("active");
-  dot1.classList.remove("active");
-  dot2.classList.add("active");
+function goToStep(index) {
+  steps.forEach((s, i) => s.classList.toggle("active", i === index));
+  dots.forEach((d, i) => d.classList.toggle("active", i === index));
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 /* ============================================================
-   📝 الخطوة 1 — نموذج التسجيل
+   📝 الخطوة 1 — التسجيل
    ============================================================ */
 document.getElementById("nextBtn").onclick = () => {
   const username = document.getElementById("username").value.trim();
@@ -429,7 +675,7 @@ document.getElementById("nextBtn").onclick = () => {
   localStorage.setItem("player_name", username);
   localStorage.setItem("player_age", age);
 
-  goToStep2();
+  goToStep(1);
 };
 
 document.getElementById("username").addEventListener("keydown", (e) => {
@@ -440,151 +686,97 @@ document.getElementById("age").addEventListener("keydown", (e) => {
 });
 
 /* ============================================================
-   📲 نظام تثبيت التطبيق (PWA Install)
-   يدعم: Chrome, Edge, Samsung Internet, Opera (Android + Desktop)
-        + تعليمات يدوية لـ Safari (iOS) و Firefox
+   📱 بيانات شرح التثبيت لكل جهاز
    ============================================================ */
-(function setupInstall() {
-  const installBtn = document.getElementById("installBtn");
-  const hintBox    = document.getElementById("hintBox");
-  const successMsg = document.getElementById("successMsg");
-  const skipBtn    = document.getElementById("skipBtn");
-
-  let deferredPrompt = null;
-
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  const isStandalone = window.matchMedia("(display-mode: standalone)").matches
-                     || window.navigator.standalone === true;
-
-  // ✅ التطبيق مثبت مسبقاً
-  if (isStandalone) {
-    if (successMsg) successMsg.textContent = "✅ تطبيق حديث مثبت ويعمل الآن";
-    if (installBtn) {
-      installBtn.disabled = true;
-      installBtn.textContent = "✅ حديث مثبت";
-    }
-    if (skipBtn) {
-      skipBtn.onclick = () => { window.location.href = "profile.html"; };
-    }
-    return;
+const GUIDES = {
+  android: {
+    icon: "📱",
+    title: "أندرويد",
+    desc: "اتبع هذه الخطوات على متصفح Chrome أو Edge أو Samsung Internet على هاتفك.",
+    steps: [
+      "اضغط على زر <strong>القائمة (⋮)</strong> في أعلى الشاشة.",
+      'اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong>.',
+      'اضغط <strong>"تثبيت"</strong> في النافذة المنبثقة.',
+      "ستجد أيقونة <strong>حديث</strong> على شاشتك الرئيسية جاهزة للفتح!"
+    ]
+  },
+  ios: {
+    icon: "🍎",
+    title: "آيفون / آيباد",
+    desc: "التثبيت على آيفون يتم عبر متصفح Safari فقط (وليس Chrome).",
+    steps: [
+      "افتح التطبيق في متصفح <strong>Safari</strong>.",
+      "اضغط زر <strong>المشاركة ⎋</strong> في أسفل الشاشة (مربع بسهم للأعلى).",
+      'مرّر للأسفل واختر <strong>"إضافة إلى الشاشة الرئيسية"</strong>.',
+      'اكتب اسمًا (مثلًا: حديث) ثم اضغط <strong>"إضافة"</strong>.',
+      "ستجد الأيقونة على شاشتك الرئيسية جاهزة!"
+    ]
+  },
+  desktop: {
+    icon: "💻",
+    title: "كمبيوتر",
+    desc: "على الكمبيوتر، يثبت التطبيق نفسه في نافذة مستقلة داخل Chrome أو Edge.",
+    steps: [
+      "في الأعلى ثلاث نقاط اضغط عليها.",
+      'سيفتح لك قائمة ابحث عن <strong>(البث والمشاركة والحفظ)</strong>.',
+      "سيفتح لك قائمة اضغط <strong>إنشاء اختصار</strong>."
+    ]
   }
-
-  // 🍎 Safari على iOS → تعليمات يدوية
-  if (isIOS) {
-    if (installBtn) {
-      installBtn.disabled = false;
-      installBtn.textContent = "📲 طريقة التثبيت على iPhone";
-      installBtn.onclick = () => {
-        if (hintBox) {
-          hintBox.style.display = "block";
-          hintBox.innerHTML = `
-            💡 <strong>للتثبيت على iPhone / iPad:</strong><br>
-            1. اضغط زر المشاركة <strong>⎋</strong> في أسفل Safari<br>
-            2. اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong><br>
-            3. اضغط "إضافة"
-          `;
-        }
-      };
-    }
-    if (skipBtn) {
-      skipBtn.onclick = () => { window.location.href = "profile.html"; };
-    }
-    return;
-  }
-
-  // 🌐 التقاط حدث beforeinstallprompt
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    if (installBtn) {
-      installBtn.disabled = false;
-      installBtn.textContent = "⬇️ إضافة حديث إلى الشاشة الرئيسية";
-    }
-    console.log("✅ التثبيت متاح");
-  });
-
-  // 🎉 عند نجاح التثبيت
-  window.addEventListener("appinstalled", () => {
-    deferredPrompt = null;
-    if (successMsg) successMsg.textContent = "✅ تم تثبيت حديث بنجاح!";
-    if (installBtn) {
-      installBtn.disabled = true;
-      installBtn.textContent = "✅ حديث مثبت";
-    }
-    setTimeout(() => {
-      window.location.href = "profile.html";
-    }, 1200);
-  });
-
-  // 🖱️ ضغط زر التثبيت
-  if (installBtn) {
-    installBtn.onclick = async () => {
-      if (!deferredPrompt) {
-        if (hintBox) {
-          hintBox.style.display = "block";
-          hintBox.innerHTML = `
-            💡 <strong>للتثبيت يدوياً:</strong><br>
-            • <strong>Chrome / Edge (كمبيوتر):</strong> اضغط أيقونة ⊕ في شريط العنوان<br>
-            • <strong>Chrome (أندرويد):</strong> القائمة (⋮) ← "تثبيت التطبيق"<br>
-            • <strong>Firefox:</strong> لا يدعم التثبيت حالياً
-          `;
-        }
-        return;
-      }
-
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-
-      if (outcome === "accepted") {
-        if (successMsg) successMsg.textContent = "✅ شكراً! جاري التثبيت...";
-      } else {
-        if (successMsg) {
-          successMsg.textContent = "⏭️ يمكنك التثبيت لاحقاً";
-          successMsg.style.color = "#888";
-        }
-      }
-
-      deferredPrompt = null;
-      installBtn.disabled = true;
-      installBtn.textContent = "✅ تم";
-    };
-  }
-
-  // ⏭️ تخطي
-  if (skipBtn) {
-    skipBtn.onclick = () => {
-      window.location.href = "index.html";
-    };
-  }
-})();
+};
 
 /* ============================================================
-   🖱️ تفاعل الهالات مع المؤشر
+   🖱️ اختيار الجهاز → عرض الشرح
    ============================================================ */
-const orb1 = document.querySelector(".glow-orb");
-const orb2 = document.querySelector(".glow-orb.orb-2");
-
-document.addEventListener("mousemove", (e) => {
-  const cx = window.innerWidth / 2;
-  const cy = window.innerHeight / 2;
-  const dx = (e.clientX - cx) / cx;
-  const dy = (e.clientY - cy) / cy;
-
-  if (orb1) orb1.style.transform = `translate(${dx * 40}px, ${dy * 40}px)`;
-  if (orb2) orb2.style.transform = `translate(${dx * -60}px, ${dy * -60}px)`;
+document.querySelectorAll(".device-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const device = btn.dataset.device;
+    showGuide(device);
+  });
 });
 
-document.addEventListener("touchmove", (e) => {
-  if (!e.touches[0]) return;
-  const t = e.touches[0];
-  const cx = window.innerWidth / 2;
-  const cy = window.innerHeight / 2;
-  const dx = (t.clientX - cx) / cx;
-  const dy = (t.clientY - cy) / cy;
+function showGuide(deviceKey) {
+  const guide = GUIDES[deviceKey];
+  if (!guide) return;
 
-  if (orb1) orb1.style.transform = `translate(${dx * 30}px, ${dy * 30}px)`;
-  if (orb2) orb2.style.transform = `translate(${dx * -45}px, ${dy * -45}px)`;
-}, { passive: true });
+  document.getElementById("guideTitle").textContent = guide.title;
+  document.getElementById("guideIcon").textContent  = guide.icon;
+  document.getElementById("guideDesc").textContent  = guide.desc;
+
+  const list = document.getElementById("stepsList");
+  list.innerHTML = "";
+  guide.steps.forEach((text, i) => {
+    const item = document.createElement("div");
+    item.className = "step-item";
+    item.innerHTML = `
+      <div class="step-num">${i + 1}</div>
+      <div class="step-text">${text}</div>
+    `;
+    list.appendChild(item);
+  });
+
+  localStorage.setItem("install_device", deviceKey);
+
+  goToStep(2);
+}
+
+/* ============================================================
+   🔙 زر الرجوع من الشرح → اختيار الجهاز
+   ============================================================ */
+document.getElementById("backBtn").onclick = () => {
+  goToStep(1);
+};
+
+/* ============================================================
+   ⏭️ زر التخطي → الانتقال للصفحة التالية
+   ============================================================ */
+document.getElementById("skipBtn").onclick = () => {
+  window.location.href = "index.html";
+};
+
+/* ============================================================
+   🚀 التشغيل
+   ============================================================ */
+createClouds();
 </script>
 
 </body>

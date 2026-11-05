@@ -6,10 +6,12 @@
 (function() {
   try {
     const theme = localStorage.getItem('app_theme') || 'light';
-    const font  = localStorage.getItem('app_font_size') || 'medium';
+    const savedFont = localStorage.getItem('app_font_size') || 'medium';
+    const font = ['small', 'medium', 'large'].includes(savedFont) ? savedFont : 'medium';
     const html  = document.documentElement;
 
     // 🔠 حجم الخط
+    html.classList.remove('font-small', 'font-medium', 'font-large');
     html.classList.add('font-' + font);
 
     // 🌙 الوضع الداكن
@@ -34,7 +36,8 @@ window.addEventListener('storage', function(e) {
   }
 
   if (e.key === 'app_font_size') {
+    const font = ['small', 'medium', 'large'].includes(e.newValue) ? e.newValue : 'medium';
     html.classList.remove('font-small', 'font-medium', 'font-large');
-    html.classList.add('font-' + (e.newValue || 'medium'));
+    html.classList.add('font-' + font);
   }
 });

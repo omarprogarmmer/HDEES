@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<script src="stting_mc.js"></script>
+<script src="reminders.js"></script>
+<link rel="stylesheet" href="m_c.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>قالب الدرس</title>
@@ -53,7 +56,7 @@
 <!-- 🎧 عنصر صوت الصفحة -->
 <audio id="slideAudio" preload="auto"></audio>
 
-<!-- 🔊 صوت الأزرار -->
+<!-- 🔊 صوت الأزرار — رابط الملف هنا 👇 -->
 <audio id="clickSound" src="sound/buttem.mp3" preload="auto"></audio>
 
 <!-- ⚙️ الإعدادات (CONFIG) -->
@@ -69,7 +72,6 @@ const CONFIG = {
   finishButtonText: "✅ انتهى الدرس",
   finishRedirectUrl: "stages.html",
 
-  /* 🎉 إعدادات الفوز */
   winText: "أحسنت! 🎉",
   winDuration: 2000,
 
@@ -88,7 +90,7 @@ const CONFIG = {
       id: 2,
       image: "photo/d1.png",
       text: "فيها باب يسمى الريان",
-      audio: "sound/page2.mp3",
+      audio: "sound/buttem.mp3",
       footer: ""
     },
     {
@@ -111,6 +113,48 @@ const CONFIG = {
 
 <!-- 🚀 سكربت الدرس -->
 <script src="losson_code/losson.js"></script>
+
+<!-- 🔊 سكربت صوت الأزرار (جميع الأزرار ما عدا اسمع) -->
+<script>
+(function () {
+  function initButtonSound() {
+    const clickSound = document.getElementById('clickSound');
+    const listenBtn  = document.getElementById('listenBtn');
+
+    if (!clickSound) {
+      console.warn('⚠️ عنصر clickSound غير موجود');
+      return;
+    }
+
+    // مستمع عام يلتقط أي ضغطة زر في الصفحة (حتى الأزرار المضافة ديناميكيًا)
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('button');
+      if (!btn) return;                   // ليس زرًا
+      if (btn === listenBtn || btn.id === 'listenBtn') return; // استثناء "اسمع"
+
+      try {
+        clickSound.pause();
+        clickSound.currentTime = 0;
+        const p = clickSound.play();
+        if (p && p.catch) {
+          p.catch(function (err) {
+            console.warn('تعذر تشغيل صوت الزر:', err);
+          });
+        }
+      } catch (err) {
+        console.warn('خطأ في تشغيل الصوت:', err);
+      }
+    }, true); // useCapture لضمان الالتقاط قبل أي معالج آخر
+  }
+
+  // انتظر تحميل الصفحة بالكامل (بعد تهيئة losson.js)
+  if (document.readyState === 'complete') {
+    initButtonSound();
+  } else {
+    window.addEventListener('load', initButtonSound);
+  }
+})();
+</script>
 
 </body>
 </html>
